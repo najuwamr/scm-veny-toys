@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('distribusis', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('pesanan_id')->constrained()->onDelete('cascade');
-            $table->foreignId('metode_pengiriman_id')->constrained('metode_pengirimmans');
+            $table->foreignId('metode_pengiriman_id')->constrained('metode_pengirimans');
             $table->enum('status', ['dijadwalkan', 'dikirim', 'dalam_perjalanan', 'diterima'])->default('dijadwalkan');
             $table->timestamp('tgl_dijadwalkan')->nullable();
             $table->timestamp('tgl_diterima')->nullable();
