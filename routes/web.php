@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PesananController;
 use App\Models\Pesanan;
 use Illuminate\Support\Facades\Route;
@@ -20,16 +21,20 @@ Route::get('/logout', [AuthController::class, 'proses_logout'])->name('proses_lo
 // ----------------------------------- //
 // ---------- ADMIN  ROUTES ---------- //
 // ----------------------------------- //
-Route::prefix('pesanan')->group(function () {
-    Route::get('/list', [PesananController::class, 'index'])->name('pesanan.list');
-    Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('pesanan.detail');
-    // Route::get('/verify/{id}', [PesananController::class, 'verify'])->name('pesanan.verify');
-});
+Route::prefix('admin')->group(function () {
+    Route::prefix('/pesanan')->group(function () {
+        Route::get('/list', [PesananController::class, 'index'])->name('admin.pesanan.list');
+        Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('admin.pesanan.detail');
+        Route::post('/action/{id}', [PesananController::class, 'action'])->name('admin.pesanan.action');
+    });
+    
+    Route::prefix('/payment')->group(function () {
+        Route::get('/list', [InvoiceController::class, 'index'])->name('admin.payment.list');
+        Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('admin.payment.detail');
 
-Route::prefix('payment')->group(function () {
-    Route::get('/list', [PesananController::class, 'index'])->name('pesanan.list');
-    Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('pesanan.detail');
-    // Route::get('/verify/{id}', [PesananController::class, 'verify'])->name('pesanan.verify');
+        Route::get('/create-invoice/{id}', [InvoiceController::class, 'create'])->name('admin.invoice.create');
+        // Route::get('/verify/{id}', [PesananController::class, 'verify'])->name('pesanan.verify');
+    });
 });
 
 
@@ -48,3 +53,17 @@ Route::prefix('payment')->group(function () {
 // ----------------------------------- //
 // -------- RESELLER  ROUTES --------- //
 // ----------------------------------- //
+Route::prefix('reseller')->group(function () {
+    Route::prefix('/pesanan')->group(function () {
+        Route::get('/pesanan-saya', [PesananController::class, 'index'])->name('pesanan.list');
+        Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('pesanan.detail');
+
+        Route::get('/create', [PesananController::class, 'create'])->name('pesanan.create');
+        Route::post('/simpan', [PesananController::class, 'insert'])->name('pesanan.insert');
+    });
+
+    Route::prefix('/payment')->group(function () {
+        Route::get('/pembayaran-saya', [InvoiceController::class, 'index'])->name('pesanan.list');
+        Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('pesanan.detail'); //lihat invoice pembayaran
+    });
+});

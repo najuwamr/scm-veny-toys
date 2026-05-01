@@ -7,7 +7,7 @@
     <title>Admin | @yield('title')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="flex min-h-screen bg-gray-50">
+<body class="flex min-h-screen bg-pink-50">
     @include('components.sidebar-admin')
     @yield('content')
 </body>
