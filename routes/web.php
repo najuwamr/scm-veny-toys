@@ -1,12 +1,17 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PesananController;
 use App\Models\Pesanan;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
+    // Redirect ke login jika user belum autentik
+    if (!\Illuminate\Support\Facades\Auth::check()) {
+        return redirect('/login');
+    }
     return view('admin.form-pesan-produk');
 });
 
@@ -21,7 +26,8 @@ Route::get('/logout', [AuthController::class, 'proses_logout'])->name('proses_lo
 // ----------------------------------- //
 // ---------- ADMIN  ROUTES ---------- //
 // ----------------------------------- //
-Route::prefix('admin')->group(function () {
+Route::middleware(['role:admin'])->prefix('admin')->group(function () {
+    Route::get('/', [DashboardController::class, 'dashboard_admin'])->name('admin.dashboard');
     Route::prefix('/pesanan')->group(function () {
         Route::get('/list', [PesananController::class, 'index'])->name('admin.pesanan.list');
         Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('admin.pesanan.detail');
@@ -42,19 +48,23 @@ Route::prefix('admin')->group(function () {
 // ----------------------------------- //
 // --------- SUPPLIER  ROUTES -------- //
 // ----------------------------------- //
-
+Route::middleware(['role:supplier'])->prefix('supplier')->group(function () {
+    // Tambahkan routes untuk supplier di sini
+});
 
 
 // ----------------------------------- //
 // ------- DISTRIBUTOR  ROUTES ------- //
 // ----------------------------------- //
-
+Route::middleware(['role:distributor'])->prefix('distributor')->group(function () {
+    // Tambahkan routes untuk distributor di sini
+});
 
 
 // ----------------------------------- //
 // -------- RESELLER  ROUTES --------- //
 // ----------------------------------- //
-Route::prefix('reseller')->group(function () {
+Route::middleware(['role:reseller'])->prefix('reseller')->group(function () {
     Route::prefix('/pesanan')->group(function () {
         Route::get('/pesanan-saya', [PesananController::class, 'my_index'])->name('pesanan.list');
         Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('pesanan.detail');
