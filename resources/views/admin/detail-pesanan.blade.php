@@ -91,6 +91,51 @@
     </div>
 
     <div class="mt-6 rounded-3xl bg-white p-6 shadow-sm">
+        <h2 class="mb-4 text-lg font-semibold text-slate-900">Invoice Pesanan</h2>
+        @if($pesanan->invoice)
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                    <p class="text-sm text-slate-500">Nomor Invoice</p>
+                    <p class="text-base font-semibold text-slate-900">{{ $pesanan->invoice->no_invoice }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-500">Status Pembayaran</p>
+                    @php
+                        $invoiceBadge = [
+                            'belum_bayar' => 'bg-yellow-100 text-yellow-800',
+                            'sebagian' => 'bg-orange-100 text-orange-800',
+                            'lunas' => 'bg-emerald-100 text-emerald-800',
+                        ];
+                    @endphp
+                    <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $invoiceBadge[$pesanan->invoice->status_pembayaran] ?? 'bg-slate-100 text-slate-700' }}">
+                        {{ ucfirst(str_replace('_', ' ', $pesanan->invoice->status_pembayaran)) }}
+                    </span>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-500">Jumlah Tagihan</p>
+                    <p class="text-base font-semibold text-slate-900">Rp {{ number_format($pesanan->invoice->jumlah_tagihan, 0, ',', '.') }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-slate-500">Tanggal Bayar</p>
+                    <p class="text-base font-semibold text-slate-900">{{ optional($pesanan->invoice->tgl_bayar)->translatedFormat('d M Y') ?? 'Belum dibayar' }}</p>
+                </div>
+            </div>
+            <div class="mt-4 flex flex-wrap gap-3">
+                <a href="{{ route('admin.invoice.detail', $pesanan->invoice->id) }}" class="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+                    Lihat Detail Invoice
+                </a>
+            </div>
+        @elseif($pesanan->status === 'diproses')
+            <p class="mb-4 text-sm text-slate-500">Invoice belum dibuat. Buat invoice setelah pesanan diterima untuk menugaskan pembayaran reseller.</p>
+            <a href="{{ route('admin.invoice.create', $pesanan->id) }}" class="inline-flex items-center rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
+                Buat Invoice
+            </a>
+        @else
+            <p class="text-sm text-slate-500">Alamat invoice akan tersedia setelah admin menerima permintaan pesanan.</p>
+        @endif
+    </div>
+
+    <div class="mt-6 rounded-3xl bg-white p-6 shadow-sm">
         <div class="mb-4 flex items-center justify-between gap-4">
             <div>
                 <h2 class="text-lg font-semibold text-slate-900">Detail Item</h2>
@@ -141,13 +186,26 @@
                 </button>
             </form>
         @elseif($pesanan->status === 'diproses')
-            <form action="{{ route('admin.pesanan.action', $pesanan->id) }}" method="POST" class="flex flex-col gap-3 sm:flex-row sm:items-center">
-                @csrf
-                <input type="hidden" name="action" value="approve">
-                <button type="submit" class="inline-flex items-center justify-center rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700">
-                    Setujui Pembayaran dan Kirim
-                </button>
-            </form>
+            @if($pesanan->invoice && $pesanan->invoice->status_pembayaran === 'lunas')
+                <form action="{{ route('admin.pesanan.action', $pesanan->id) }}" method="POST" class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    @csrf
+                    <input type="hidden" name="action" value="approve">
+                    <button type="submit" class="inline-flex items-center justify-center rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700">
+                        Setujui Pembayaran dan Kirim
+                    </button>
+                </form>
+            @elseif($pesanan->invoice)
+                <div class="rounded-3xl border border-yellow-200 bg-yellow-50 px-4 py-4 text-sm text-yellow-800">
+                    Invoice sudah dibuat, tetapi pembayaran belum lunas. Mohon periksa invoice sebelum menyetujui pengiriman.
+                </div>
+            @else
+                <div class="space-y-3">
+                    <p class="text-sm text-slate-500">Invoice belum dibuat untuk pesanan ini. Buat invoice dan konfirmasi pembayaran terlebih dahulu.</p>
+                    <a href="{{ route('admin.invoice.create', $pesanan->id) }}" class="inline-flex items-center rounded-full bg-indigo-600 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-700">
+                        Buat Invoice
+                    </a>
+                </div>
+            @endif
         @else
             <div class="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-600">
                 Pesanan saat ini berstatus <span class="font-semibold text-slate-900">{{ ucfirst($pesanan->status) }}</span>. Tidak ada aksi tambahan.

@@ -28,11 +28,12 @@ Route::prefix('admin')->group(function () {
         Route::post('/action/{id}', [PesananController::class, 'action'])->name('admin.pesanan.action');
     });
     
-    Route::prefix('/payment')->group(function () {
-        Route::get('/list', [InvoiceController::class, 'index'])->name('admin.payment.list');
-        Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('admin.payment.detail');
+    Route::prefix('/invoice')->group(function () {
+        Route::get('/list', [InvoiceController::class, 'index'])->name('admin.invoice.list');
+        Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('admin.invoice.detail');
+        Route::post('/action/{id}', [InvoiceController::class, 'action'])->name('admin.invoice.action');
 
-        Route::get('/create-invoice/{id}', [InvoiceController::class, 'create'])->name('admin.invoice.create');
+        Route::get('/{id}/create-invoice', [InvoiceController::class, 'create'])->name('admin.invoice.create');
         // Route::get('/verify/{id}', [PesananController::class, 'verify'])->name('pesanan.verify');
     });
 });
@@ -55,11 +56,11 @@ Route::prefix('admin')->group(function () {
 // ----------------------------------- //
 Route::prefix('reseller')->group(function () {
     Route::prefix('/pesanan')->group(function () {
-        Route::get('/pesanan-saya', [PesananController::class, 'index'])->name('pesanan.list');
+        Route::get('/pesanan-saya', [PesananController::class, 'my_index'])->name('pesanan.list');
         Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('pesanan.detail');
 
         Route::get('/create', [PesananController::class, 'create'])->name('pesanan.create');
-        Route::post('/simpan', [PesananController::class, 'insert'])->name('pesanan.insert');
+        Route::post('/simpan', [PesananController::class, 'store'])->name('pesanan.store');
     });
 
     Route::prefix('/payment')->group(function () {

@@ -72,13 +72,29 @@
                                         </button>
                                     </form>
                                 @elseif($pesanan->status === 'diproses')
-                                    <form action="{{ route('admin.pesanan.action', $pesanan->id) }}" method="POST" class="inline">
-                                        @csrf
-                                        <input type="hidden" name="action" value="approve">
-                                        <button type="submit" class="inline-flex items-center rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700">
-                                            Setujui Pembayaran
-                                        </button>
-                                    </form>
+                                    @if(!$pesanan->invoice)
+                                        <a href="{{ route('admin.invoice.create', $pesanan->id) }}" class="inline-flex items-center rounded-full bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700">
+                                            Buat Invoice
+                                        </a>
+                                    @else
+                                        <a href="{{ route('admin.invoice.detail', $pesanan->invoice->id) }}" class="inline-flex items-center rounded-full bg-slate-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800">
+                                            Lihat Invoice
+                                        </a>
+
+                                        @if($pesanan->invoice->status_pembayaran === 'lunas')
+                                            <form action="{{ route('admin.pesanan.action', $pesanan->id) }}" method="POST" class="inline">
+                                                @csrf
+                                                <input type="hidden" name="action" value="approve">
+                                                <button type="submit" class="inline-flex items-center rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700">
+                                                    Setujui Pembayaran
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span class="inline-flex items-center rounded-full bg-yellow-100 px-3 py-1.5 text-xs font-semibold text-yellow-800">
+                                                Invoice belum lunas
+                                            </span>
+                                        @endif
+                                    @endif
                                 @else
                                     <span class="text-xs text-slate-500">Tidak ada aksi</span>
                                 @endif

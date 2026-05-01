@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.reseller')
 
 @section('title', 'Form Pesan Produk')
 
