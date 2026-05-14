@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Invoice extends Model
 {
     use HasUuids;
+
+    public const PAYMENT_METHODS = [
+        'transfer bank',
+        'e-wallet',
+        'cod',
+    ];
+
     protected $fillable = ['pesanan_id', 'no_invoice', 'jumlah_tagihan', 'status_pembayaran', 'tgl_bayar', 'metode_bayar'];
 
     public function pesanan() { return $this->belongsTo(Pesanan::class); }

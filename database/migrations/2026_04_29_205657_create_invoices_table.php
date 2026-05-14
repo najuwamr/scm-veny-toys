@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('jumlah_tagihan');
             $table->enum('status_pembayaran', ['belum_bayar', 'sebagian', 'lunas'])->default('belum_bayar');
             $table->date('tgl_bayar')->nullable();
-            $table->string('metode_bayar', 50)->nullable();
+            $table->enum('metode_bayar', ['transfer bank', 'e-wallet', 'cod'])->nullable();
             $table->timestamps();
         });
     }

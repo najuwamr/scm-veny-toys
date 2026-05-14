@@ -39,10 +39,32 @@ class PesananController extends Controller
 
     public function action(Request $request, $id)
     {
-        $pesanan = Pesanan::findOrFail($id);
+        $pesanan = Pesanan::with('items.produk')->findOrFail($id);
         $action = $request->input('action');
 
         if ($action === 'accept' && $pesanan->status === 'menunggu') {
+            // Validasi stok tersedia untuk semua item
+            foreach ($pesanan->items as $item) {
+                $product = $item->produk;
+                if ($item->jumlah > $product->stok_saat_ini) {
+                    return back()->with('error', "Stok produk '{$product->nama}' tidak cukup. Stok tersedia: {$product->stok_saat_ini}, diminta: {$item->jumlah}");
+                }
+            }
+
+            // Kurangi stok dan catat mutasi untuk setiap item
+            foreach ($pesanan->items as $item) {
+                $product = $item->produk;
+                $product->stok_saat_ini -= $item->jumlah;
+                $product->save();
+
+                // Catat mutasi ke tabel mutations untuk forecasting
+                $product->mutations()->create([
+                    'jenis_mutasi' => 'keluar',
+                    'jumlah' => $item->jumlah,
+                    'catatan' => "Pesanan {$pesanan->no_pesanan} dari {$pesanan->reseller->nama_toko}",
+                ]);
+            }
+
             $pesanan->status = 'diproses';
         } elseif ($action === 'approve' && $pesanan->status === 'diproses') {
             if (!$pesanan->invoice) {
@@ -94,6 +116,13 @@ class PesananController extends Controller
         $product = Produk::findOrFail($request->input('produk_id'));
         $quantity = (int) $request->input('jumlah');
         $reseller = Auth::user()->reseller;
+
+        // Validasi stok
+        if ($quantity > $product->stok_saat_ini) {
+            return back()
+                ->withInput()
+                ->withErrors(['jumlah' => "Stok tidak cukup. Stok tersedia: {$product->stok_saat_ini}"]);
+        }
 
         $pesanan = Pesanan::create([
             'reseller_id' => $reseller->id,

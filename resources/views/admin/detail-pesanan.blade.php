@@ -117,7 +117,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-slate-500">Tanggal Bayar</p>
-                    <p class="text-base font-semibold text-slate-900">{{ optional($pesanan->invoice->tgl_bayar)->translatedFormat('d M Y') ?? 'Belum dibayar' }}</p>
+                    <p class="text-base font-semibold text-slate-900">{{ \Carbon\Carbon::parse($pesanan->invoice->tgl_bayar)->translatedFormat('d M Y') }}</p>
                 </div>
             </div>
             <div class="mt-4 flex flex-wrap gap-3">

@@ -57,7 +57,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-slate-600">
-                            {{ $invoice->tgl_bayar?->translatedFormat('d M Y') ?? '-' }}
+                            {{ \Carbon\Carbon::parse($invoice->tgl_bayar)->translatedFormat('d M Y') ?? '-' }}
                         </td>
                         <td class="px-6 py-4">
                             <a href="{{ route('admin.invoice.detail', $invoice->id) }}" class="inline-flex items-center rounded-full bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800">

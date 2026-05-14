@@ -49,7 +49,7 @@
                 </div>
                 <div>
                     <dt class="font-semibold text-slate-800">Tanggal Bayar</dt>
-                    <dd>{{ optional($invoice->tgl_bayar)->translatedFormat('d M Y') ?? '-' }}</dd>
+                    <dd>{{ $invoice->tgl_bayar ? \Carbon\Carbon::parse($invoice->tgl_bayar)->translatedFormat('d M Y') : '-' }}</dd>
                 </div>
             </dl>
         </div>
@@ -109,8 +109,53 @@
         </div>
     </div>
 
-    <div class="mt-6 rounded-3xl border border-yellow-200 bg-yellow-50 px-4 py-4 text-sm text-yellow-800">
-        Konfirmasi pembayaran dilakukan di luar sistem. Pastikan Anda menginformasikan bukti pembayaran langsung kepada admin.
+    <div class="mt-6 rounded-3xl bg-white p-6 shadow-sm">
+        @if(session('success'))
+            <div class="mb-4 rounded-3xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <h2 class="text-lg font-semibold text-slate-900">Pilih Metode Pembayaran</h2>
+        <p class="mt-2 text-sm text-slate-500">Pilih salah satu metode pembayaran, lalu konfirmasi via WhatsApp ke admin.</p>
+
+        <form action="{{ route('reseller.payment.confirm', $invoice->id) }}" method="POST" class="mt-4 space-y-4">
+            @csrf
+
+            <div>
+                <label class="mb-2 block text-sm font-semibold text-slate-700">Metode Pembayaran</label>
+                <select name="metode_bayar" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm focus:border-slate-400 focus:outline-none">
+                    <option value="" {{ old('metode_bayar', $invoice->metode_bayar) === null ? 'selected' : '' }}>Pilih metode pembayaran</option>
+                    <option value="transfer bank" {{ old('metode_bayar', $invoice->metode_bayar) === 'transfer bank' ? 'selected' : '' }}>Transfer Bank</option>
+                    <option value="e-wallet" {{ old('metode_bayar', $invoice->metode_bayar) === 'e-wallet' ? 'selected' : '' }}>E-Wallet</option>
+                    <option value="cod" {{ old('metode_bayar', $invoice->metode_bayar) === 'cod' ? 'selected' : '' }}>COD</option>
+                </select>
+                @error('metode_bayar')
+                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <button type="submit" class="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800">
+                Simpan Metode Pembayaran
+            </button>
+        </form>
+
+        <div class="mt-6 rounded-3xl border border-slate-200 bg-slate-50 p-5">
+            <p class="text-sm font-semibold text-slate-900">Konfirmasi WhatsApp</p>
+            <p class="mt-2 text-sm text-slate-600">Setelah memilih metode pembayaran, klik tombol di bawah untuk menghubungi admin. Konfirmasi pembayaran dilakukan di luar sistem.</p>
+            @php
+                $adminNumber = '6282230474146';
+                $adminNumberWhatsapp = '6282230474146';
+                $message = 'Halo admin, saya ingin mengkonfirmasi pembayaran untuk invoice ' . $invoice->no_invoice . ' dengan metode ' . ($invoice->metode_bayar ?? 'belum dipilih') . '. [Tambahkan detail pembayaran atau bukti transfer Anda di sini]';
+            @endphp
+            <a href="https://wa.me/{{ $adminNumberWhatsapp }}?text={{ urlencode($message) }}" target="_blank" class="mt-4 inline-flex w-full items-center justify-center rounded-full bg-green-600 px-5 py-3 text-sm font-semibold text-white hover:bg-green-700 {{ $invoice->metode_bayar ? '' : 'opacity-70 pointer-events-none' }}">
+                Konfirmasi via WhatsApp ke Admin
+            </a>
+            <p class="mt-3 text-sm text-slate-600">Nomor admin: {{ $adminNumber }}</p>
+            @unless($invoice->metode_bayar)
+                <p class="mt-2 text-sm text-yellow-700">Pilih metode pembayaran terlebih dahulu untuk mengaktifkan tombol WhatsApp.</p>
+            @endunless
+        </div>
     </div>
 </div>
 @endsection

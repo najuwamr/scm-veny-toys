@@ -50,6 +50,24 @@ class InvoiceController extends Controller
         return view('admin.detail-invoice', compact('invoice'));
     }
 
+    public function confirm(Request $request, $id)
+    {
+        $invoice = Invoice::with('pesanan')->findOrFail($id);
+
+        if (!Auth::check() || Auth::user()->role !== 'reseller' || $invoice->pesanan->reseller_id !== Auth::user()->reseller->id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'metode_bayar' => 'required|in:' . implode(',', Invoice::PAYMENT_METHODS),
+        ]);
+
+        $invoice->metode_bayar = $request->input('metode_bayar');
+        $invoice->save();
+
+        return back()->with('success', 'Metode pembayaran tersimpan. Silakan konfirmasi melalui WhatsApp ke admin.');
+    }
+
     public function create($id)
     {
         $pesanan = Pesanan::with('invoice')->findOrFail($id);
@@ -82,8 +100,13 @@ class InvoiceController extends Controller
             return back()->with('error', 'Status pembayaran tidak valid.');
         }
 
+        $metodeBayar = $request->input('metode_bayar');
+        if ($metodeBayar && !in_array($metodeBayar, Invoice::PAYMENT_METHODS, true)) {
+            return back()->with('error', 'Metode pembayaran tidak valid.');
+        }
+
         $invoice->status_pembayaran = $status;
-        $invoice->metode_bayar = $request->input('metode_bayar');
+        $invoice->metode_bayar = $metodeBayar;
 
         if ($status === 'lunas') {
             $invoice->tgl_bayar = Carbon::now()->format('Y-m-d');

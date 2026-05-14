@@ -33,7 +33,7 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->group(function () {
         Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('admin.pesanan.detail');
         Route::post('/action/{id}', [PesananController::class, 'action'])->name('admin.pesanan.action');
     });
-    
+
     Route::prefix('/invoice')->group(function () {
         Route::get('/list', [InvoiceController::class, 'index'])->name('admin.invoice.list');
         Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('admin.invoice.detail');
@@ -76,5 +76,6 @@ Route::middleware(['auth','role:reseller'])->prefix('reseller')->group(function 
     Route::prefix('/payment')->group(function () {
         Route::get('/pembayaran-saya', [InvoiceController::class, 'index'])->name('reseller.payment.list');
         Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('reseller.payment.detail'); //lihat invoice pembayaran
+        Route::post('/detail/{id}/konfirmasi', [InvoiceController::class, 'confirm'])->name('reseller.payment.confirm');
     });
 });

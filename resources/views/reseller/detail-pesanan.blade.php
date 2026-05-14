@@ -90,7 +90,7 @@
                     </div>
                     <div>
                         <dt class="font-semibold text-slate-800">Tanggal Bayar</dt>
-                        <dd>{{ optional($pesanan->invoice->tgl_bayar)->translatedFormat('d M Y') ?? '-' }}</dd>
+                        <dd>{{\Carbon\Carbon::parse($pesanan->invoice->tgl_bayar)->translatedFormat('d M Y') ?? '-' }}</dd>
                     </div>
                 @else
                     <div>

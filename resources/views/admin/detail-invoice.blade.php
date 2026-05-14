@@ -48,7 +48,7 @@
                     </div>
                     <div>
                         <dt class="font-semibold text-slate-800">Tanggal Bayar</dt>
-                        <dd>{{ optional($invoice->tgl_bayar)->translatedFormat('d M Y') ?? '-' }}</dd>
+                        <dd>{{ $invoice->tgl_bayar ? \Carbon\Carbon::parse($invoice->tgl_bayar)->translatedFormat('d M Y') : '-' }}</dd>
                     </div>
                     <div>
                         <dt class="font-semibold text-slate-800">Status Pembayaran</dt>
@@ -140,7 +140,12 @@
 
             <div>
                 <label class="mb-2 block text-sm font-semibold text-slate-700">Metode Bayar</label>
-                <input type="text" name="metode_bayar" value="{{ old('metode_bayar', $invoice->metode_bayar) }}" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm focus:border-slate-400 focus:outline-none" placeholder="Contoh: Transfer Bank / COD">
+                <select name="metode_bayar" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm focus:border-slate-400 focus:outline-none">
+                    <option value="" {{ old('metode_bayar', $invoice->metode_bayar) === null ? 'selected' : '' }}>Pilih metode pembayaran</option>
+                    <option value="transfer bank" {{ old('metode_bayar', $invoice->metode_bayar) === 'transfer bank' ? 'selected' : '' }}>Transfer Bank</option>
+                    <option value="e-wallet" {{ old('metode_bayar', $invoice->metode_bayar) === 'e-wallet' ? 'selected' : '' }}>E-Wallet</option>
+                    <option value="cod" {{ old('metode_bayar', $invoice->metode_bayar) === 'cod' ? 'selected' : '' }}>COD</option>
+                </select>
             </div>
 
             <button type="submit" class="inline-flex items-center justify-center rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700">
