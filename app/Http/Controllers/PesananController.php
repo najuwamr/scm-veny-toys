@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ItemPesanan;
 use App\Models\Pesanan;
+use App\Models\Produk;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class PesananController extends Controller
 {
@@ -21,6 +25,14 @@ class PesananController extends Controller
     public function detail($id)
     {
         $pesanan = Pesanan::with(['reseller', 'items.produk', 'invoice'])->findOrFail($id);
+
+        if (Auth::check() && Auth::user()->role === 'reseller') {
+            if ($pesanan->reseller_id !== Auth::user()->reseller->id) {
+                abort(403);
+            }
+
+            return view('reseller.detail-pesanan', compact('pesanan'));
+        }
 
         return view('admin.detail-pesanan', compact('pesanan'));
     }
@@ -53,24 +65,53 @@ class PesananController extends Controller
     // Reseller Methods
     public function my_index()
     {
-        return view('reseller.list-pesanan');
+        $resellerId = Auth::user()->reseller->id;
+
+        $pesanans = Pesanan::with(['items.produk', 'invoice'])
+            ->where('reseller_id', $resellerId)
+            ->orderByRaw("CASE status WHEN 'menunggu' THEN 1 WHEN 'diproses' THEN 2 WHEN 'dikirim' THEN 3 WHEN 'selesai' THEN 4 ELSE 5 END")
+            ->orderByDesc('tgl_pesanan')
+            ->get();
+
+        return view('reseller.list-pesanan', compact('pesanans'));
     }
 
     public function create()
     {
-        return view('reseller.form-pesan-produk');
+        $products = Produk::orderBy('nama')->get();
+
+        return view('reseller.form-pesan-produk', compact('products'));
     }
 
     public function store(Request $request)
     {
-        // Validasi input
         $request->validate([
-            
+            'produk_id' => 'required|exists:produks,id',
+            'jumlah' => 'required|integer|min:1',
+            'catatan' => 'nullable|string',
         ]);
 
-        // Logika penyimpanan pesanan baru
-        // ...
+        $product = Produk::findOrFail($request->input('produk_id'));
+        $quantity = (int) $request->input('jumlah');
+        $reseller = Auth::user()->reseller;
 
-        return redirect()->route('pesanan.list')->with('success', 'Pesanan berhasil dibuat.');
+        $pesanan = Pesanan::create([
+            'reseller_id' => $reseller->id,
+            'no_pesanan' => 'PO-' . strtoupper(Str::random(8)),
+            'status' => 'menunggu',
+            'total_harga' => $product->harga * $quantity,
+            'tgl_pesanan' => now()->format('Y-m-d'),
+            'catatan' => $request->input('catatan'),
+        ]);
+
+        ItemPesanan::create([
+            'pesanan_id' => $pesanan->id,
+            'produk_id' => $product->id,
+            'jumlah' => $quantity,
+            'harga_satuan' => $product->harga,
+            'subtotal' => $product->harga * $quantity,
+        ]);
+
+        return redirect()->route('reseller.pesanan.list')->with('success', 'Pesanan berhasil dibuat. Silakan cek status pada Pesanan Saya.');
     }
 }

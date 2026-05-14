@@ -6,12 +6,27 @@ use App\Models\Invoice;
 use App\Models\Pesanan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class InvoiceController extends Controller
 {
     public function index()
     {
+        if (Auth::check() && Auth::user()->role === 'reseller') {
+            $resellerId = Auth::user()->reseller->id;
+
+            $invoices = Invoice::with(['pesanan.reseller'])
+                ->whereHas('pesanan', function ($query) use ($resellerId) {
+                    $query->where('reseller_id', $resellerId);
+                })
+                ->orderByRaw("CASE status_pembayaran WHEN 'belum_bayar' THEN 1 WHEN 'sebagian' THEN 2 WHEN 'lunas' THEN 3 ELSE 4 END")
+                ->orderByDesc('created_at')
+                ->get();
+
+            return view('reseller.list-payment', compact('invoices'));
+        }
+
         $invoices = Invoice::with(['pesanan.reseller'])
             ->orderByRaw("CASE status_pembayaran WHEN 'belum_bayar' THEN 1 WHEN 'sebagian' THEN 2 WHEN 'lunas' THEN 3 ELSE 4 END")
             ->orderByDesc('created_at')
@@ -23,6 +38,14 @@ class InvoiceController extends Controller
     public function detail($id)
     {
         $invoice = Invoice::with(['pesanan.reseller', 'pesanan.items.produk'])->findOrFail($id);
+
+        if (Auth::check() && Auth::user()->role === 'reseller') {
+            if ($invoice->pesanan->reseller_id !== Auth::user()->reseller->id) {
+                abort(403);
+            }
+
+            return view('reseller.detail-payment', compact('invoice'));
+        }
 
         return view('admin.detail-invoice', compact('invoice'));
     }
