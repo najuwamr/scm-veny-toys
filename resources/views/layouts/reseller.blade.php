@@ -8,7 +8,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="flex min-h-screen bg-pink-50">
-    @include('components.sidebar')
+    @include('components.sidebar-reseller')
     @yield('content')
 </body>
 </html>

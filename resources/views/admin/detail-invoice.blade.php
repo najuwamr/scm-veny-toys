@@ -10,7 +10,7 @@
             <p class="text-sm text-slate-500">Lihat rincian invoice dan ubah status pembayaran sesuai konfirmasi reseller.</p>
         </div>
         <a href="{{ route('admin.invoice.list') }}" class="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
-            Kembali ke List Invoice
+            Kembali ke Daftar Invoice
         </a>
     </div>
 

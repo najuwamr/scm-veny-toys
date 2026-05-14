@@ -7,18 +7,18 @@ use App\Http\Controllers\PesananController;
 use App\Models\Pesanan;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    // Redirect ke login jika user belum autentik
-    if (!\Illuminate\Support\Facades\Auth::check()) {
-        return redirect('/login');
-    }
-    return view('admin.form-pesan-produk');
-});
+// Route::get('/', function () {
+//     // Redirect ke login jika user belum autentik
+//     if (!\Illuminate\Support\Facades\Auth::check()) {
+//         return redirect('/login');
+//     }
+//     return view('login');
+// });
 
 // ----------------------------------- //
 // ----------- AUTH  ROUTES ---------- //
 // ----------------------------------- //
-Route::get('/login', [AuthController::class, 'klik_login'])->name('login');
+Route::get('/', [AuthController::class, 'klik_login'])->name('login');
 Route::post('/login', [AuthController::class, 'proses_login'])->name('proses_login');
 Route::get('/logout', [AuthController::class, 'proses_logout'])->name('proses_logout');
 
@@ -26,7 +26,7 @@ Route::get('/logout', [AuthController::class, 'proses_logout'])->name('proses_lo
 // ----------------------------------- //
 // ---------- ADMIN  ROUTES ---------- //
 // ----------------------------------- //
-Route::middleware(['role:admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth','role:admin'])->prefix('admin')->group(function () {
     Route::get('/', [DashboardController::class, 'dashboard_admin'])->name('admin.dashboard');
     Route::prefix('/pesanan')->group(function () {
         Route::get('/list', [PesananController::class, 'index'])->name('admin.pesanan.list');
@@ -56,7 +56,7 @@ Route::middleware(['role:supplier'])->prefix('supplier')->group(function () {
 // ----------------------------------- //
 // ------- DISTRIBUTOR  ROUTES ------- //
 // ----------------------------------- //
-Route::middleware(['role:distributor'])->prefix('distributor')->group(function () {
+Route::middleware(['auth','role:distributor'])->prefix('distributor')->group(function () {
     // Tambahkan routes untuk distributor di sini
 });
 
@@ -64,17 +64,17 @@ Route::middleware(['role:distributor'])->prefix('distributor')->group(function (
 // ----------------------------------- //
 // -------- RESELLER  ROUTES --------- //
 // ----------------------------------- //
-Route::middleware(['role:reseller'])->prefix('reseller')->group(function () {
+Route::middleware(['auth','role:reseller'])->prefix('reseller')->group(function () {
     Route::prefix('/pesanan')->group(function () {
-        Route::get('/pesanan-saya', [PesananController::class, 'my_index'])->name('pesanan.list');
-        Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('pesanan.detail');
+        Route::get('/pesanan-saya', [PesananController::class, 'my_index'])->name('reseller.pesanan.list');
+        Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('reseller.pesanan.detail');
 
-        Route::get('/create', [PesananController::class, 'create'])->name('pesanan.create');
-        Route::post('/simpan', [PesananController::class, 'store'])->name('pesanan.store');
+        Route::get('/create', [PesananController::class, 'create'])->name('reseller.pesanan.create');
+        Route::post('/simpan', [PesananController::class, 'store'])->name('reseller.pesanan.store');
     });
 
     Route::prefix('/payment')->group(function () {
-        Route::get('/pembayaran-saya', [InvoiceController::class, 'index'])->name('pesanan.list');
-        Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('pesanan.detail'); //lihat invoice pembayaran
+        Route::get('/pembayaran-saya', [InvoiceController::class, 'index'])->name('reseller.payment.list');
+        Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('reseller.payment.detail'); //lihat invoice pembayaran
     });
 });
