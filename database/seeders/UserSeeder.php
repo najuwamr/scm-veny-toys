@@ -31,13 +31,13 @@ class UserSeeder extends Seeder
             'telepon' => '081234567892',
         ]);
 
-        // DISTRIBUTOR
+        // PRODUSEN (updated from distributor)
         User::create([
             'id' => Str::uuid(),
-            'nama' => 'Distributor A',
-            'username' => 'distributor',
+            'nama' => 'Produsen A',
+            'username' => 'produsen',
             'password' => Hash::make('password'),
-            'role' => 'distributor',
+            'role' => 'produsen',
             'telepon' => '081234567893',
         ]);
 

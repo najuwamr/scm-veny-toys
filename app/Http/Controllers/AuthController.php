@@ -14,7 +14,14 @@ class AuthController extends Controller
     public function klik_login()
     {
         if (Auth::check()) {
-            return redirect('/admin');
+            $redirectPath = match(Auth::user()->role) {
+                'admin' => '/admin',
+                'supplier' => '/supplier',
+                'produsen' => '/produsen',
+                'reseller' => '/reseller',
+                default => '/',
+            };
+            return redirect($redirectPath);
         }
         return view('login');
     }
@@ -40,7 +47,7 @@ class AuthController extends Controller
             $redirectPath = match($user->role) {
                 'admin' => '/admin',
                 'supplier' => '/supplier',
-                'distributor' => '/distributor',
+                'produsen' => '/produsen',
                 'reseller' => '/reseller',
                 default => '/',
             };

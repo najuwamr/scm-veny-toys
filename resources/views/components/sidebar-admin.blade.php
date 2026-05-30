@@ -12,9 +12,10 @@
     </div>
 
     <nav class="flex-1 overflow-y-auto py-3 [&::-webkit-scrollbar]:hidden">
-        <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Inventory</p
+        <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Inventory</p>
         <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Procurement</p>
-        <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Production</p>
+        <p class="px-5 py-2 text-sm font-semibold uppercase 
+        tracking-widest text-pink-200">Production</p>
         <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Distribution</p>
         <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Order & Payment</p>
         <a href="{{ route('admin.pesanan.list') }}" class="group relative flex items-center gap-2 px-4 py-2 transition-colors hover:bg-pink-50">
@@ -31,4 +32,20 @@
         </a>
         <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Analytic & Report</p>
     </nav>
+
+    {{-- User Info & Logout --}}
+    <div class="border-t border-pink-200 px-4 py-4 space-y-3">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-semibold text-gray-800">{{ Auth::user()->nama }}</p>
+                <p class="text-xs text-gray-500">{{ ucfirst(Auth::user()->role) }}</p>
+            </div>
+        </div>
+        <a href="{{ route('proses_logout') }}" class="flex w-full items-center justify-center gap-2 rounded-full bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            Logout
+        </a>
+    </div>
 </aside>
