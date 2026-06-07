@@ -18,8 +18,8 @@ class AuthController extends Controller
                 'admin' => '/admin',
                 'supplier' => '/supplier',
                 'produsen' => '/produsen',
-                'reseller' => '/reseller',
-                default => '/',
+                'reseller' => '/reseller/pesanan/pesanan-saya',
+                default => '/login',
             };
             return redirect($redirectPath);
         }
@@ -48,8 +48,8 @@ class AuthController extends Controller
                 'admin' => '/admin',
                 'supplier' => '/supplier',
                 'produsen' => '/produsen',
-                'reseller' => '/reseller',
-                default => '/',
+                'reseller' => '/reseller/pesanan/pesanan-saya',
+                default => '/login',
             };
             
             return redirect()->intended($redirectPath);

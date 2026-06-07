@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
             'telepon' => '081234567892',
         ]);
 
-        // PRODUSEN (updated from distributor)
+        // PRODUSEN
         User::create([
             'id' => Str::uuid(),
             'nama' => 'Produsen A',

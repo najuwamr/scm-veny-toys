@@ -4,15 +4,23 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PesananController;
-use App\Models\Pesanan;
+use App\Http\Controllers\ProdusenController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    // Redirect ke login jika user belum autentik
     if (!\Illuminate\Support\Facades\Auth::check()) {
         return redirect('/login');
     }
-    return view('admin.dashboard');
+
+    $redirectPath = match(\Illuminate\Support\Facades\Auth::user()->role) {
+        'admin' => '/admin',
+        'supplier' => '/supplier',
+        'produsen' => '/produsen',
+        'reseller' => '/reseller/pesanan/pesanan-saya',
+        default => '/login',
+    };
+
+    return redirect($redirectPath);
 });
 
 // ----------------------------------- //
@@ -28,56 +36,81 @@ Route::get('/logout', [AuthController::class, 'proses_logout'])->name('proses_lo
 // ----------------------------------- //
 Route::middleware(['role:admin'])->prefix('admin')->group(function () {
     Route::get('/', [DashboardController::class, 'dashboard_admin'])->name('admin.dashboard');
-    
     Route::prefix('/pesanan')->group(function () {
         Route::get('/list', [PesananController::class, 'index'])->name('admin.pesanan.list');
         Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('admin.pesanan.detail');
         Route::post('/action/{id}', [PesananController::class, 'action'])->name('admin.pesanan.action');
-        Route::post('/create-invoice/{id}', [PesananController::class, 'createInvoice'])->name('admin.pesanan.create-invoice');
     });
     
     Route::prefix('/invoice')->group(function () {
         Route::get('/list', [InvoiceController::class, 'index'])->name('admin.invoice.list');
         Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('admin.invoice.detail');
-        Route::post('/verify-payment/{id}', [InvoiceController::class, 'verifyPayment'])->name('admin.invoice.verify');
-        Route::post('/reject-payment/{id}', [InvoiceController::class, 'rejectPayment'])->name('admin.invoice.reject');
-        Route::post('/confirm-delivery/{id}', [InvoiceController::class, 'confirmDelivery'])->name('admin.invoice.confirm-delivery');
+        Route::post('/verify/{id}', [InvoiceController::class, 'verifyPayment'])->name('admin.invoice.verify');
+        Route::post('/reject/{id}', [InvoiceController::class, 'rejectPayment'])->name('admin.invoice.reject');
+
+        Route::get('/{id}/create-invoice', [InvoiceController::class, 'create'])->name('admin.invoice.create');
     });
 });
+
 
 // ----------------------------------- //
 // --------- SUPPLIER  ROUTES -------- //
 // ----------------------------------- //
 Route::middleware(['role:supplier'])->prefix('supplier')->group(function () {
-    // Tambahkan routes untuk supplier di sini
+    Route::get('/', function () {
+        return response('Dashboard supplier belum tersedia. Silakan hubungi admin untuk membuka akses.', 200);
+    })->name('supplier.dashboard');
 });
 
+
 // ----------------------------------- //
-// --------- PRODUSEN  ROUTES -------- //
+// --------- PRODUSEN  ROUTES --------- //
 // ----------------------------------- //
 Route::middleware(['role:produsen'])->prefix('produsen')->group(function () {
-    // Tambahkan routes untuk produsen di sini
+    Route::get('/', [ProdusenController::class, 'dashboard'])->name('produsen.dashboard');
+
+    Route::prefix('inventory')->group(function () {
+        Route::get('/bahan-baku', [ProdusenController::class, 'bahanBakuIndex'])->name('produsen.inventory.bahan-baku.index');
+        Route::get('/produk', [ProdusenController::class, 'produkIndex'])->name('produsen.inventory.produk.index');
+        Route::get('/mutasi', [ProdusenController::class, 'mutasiForm'])->name('produsen.inventory.mutasi.create');
+        Route::post('/mutasi', [ProdusenController::class, 'storeMutasi'])->name('produsen.inventory.mutasi.store');
+    });
+
+    Route::prefix('procurement')->group(function () {
+        Route::get('/', [ProdusenController::class, 'permintaanIndex'])->name('produsen.procurement.index');
+        Route::get('/create', [ProdusenController::class, 'createPermintaan'])->name('produsen.procurement.create');
+        Route::post('/store', [ProdusenController::class, 'storePermintaan'])->name('produsen.procurement.store');
+    });
+
+    Route::prefix('produksi')->group(function () {
+        Route::get('/', [ProdusenController::class, 'produksiIndex'])->name('produsen.produksi.index');
+        Route::get('/create', [ProdusenController::class, 'createProduksi'])->name('produsen.produksi.create');
+        Route::post('/store-rencana', [ProdusenController::class, 'storeRencanaProduksi'])->name('produsen.produksi.store-rencana');
+        Route::post('/store-realisasi', [ProdusenController::class, 'storeRealisasiProduksi'])->name('produsen.produksi.store-realisasi');
+    });
+
+    Route::get('/forecast', [ProdusenController::class, 'forecastIndex'])->name('produsen.forecast.index');
+    Route::post('/forecast/use/{id}', [ProdusenController::class, 'useForecast'])->name('produsen.forecast.use');
 });
+
 
 // ----------------------------------- //
 // -------- RESELLER  ROUTES --------- //
 // ----------------------------------- //
 Route::middleware(['role:reseller'])->prefix('reseller')->group(function () {
     Route::prefix('/pesanan')->group(function () {
-        Route::get('/pesanan-saya', [PesananController::class, 'my_index'])->name('pesanan.list');
-        Route::get('/detail/{id}', [PesananController::class, 'my_detail'])->name('pesanan.detail');
-        Route::get('/create', [PesananController::class, 'create'])->name('pesanan.create');
-        Route::post('/simpan', [PesananController::class, 'store'])->name('pesanan.store');
-        Route::post('/confirm-received/{id}', [PesananController::class, 'confirmReceived'])->name('pesanan.confirm-received');
+        Route::get('/pesanan-saya', [PesananController::class, 'my_index'])->name('reseller.pesanan.list');
+        Route::get('/detail/{id}', [PesananController::class, 'my_detail'])->name('reseller.pesanan.detail');
+        Route::get('/{id}/upload-bukti', [PesananController::class, 'my_upload_payment_proof'])->name('reseller.pesanan.upload-bukti');
+        Route::post('/{id}/store-bukti', [InvoiceController::class, 'uploadPaymentProof'])->name('reseller.pesanan.store-bukti');
+        Route::post('/{id}/confirm-received', [PesananController::class, 'confirmReceived'])->name('reseller.pesanan.confirm-received');
+
+        Route::get('/create', [PesananController::class, 'create'])->name('reseller.pesanan.create');
+        Route::post('/simpan', [PesananController::class, 'store'])->name('reseller.pesanan.store');
     });
 
     Route::prefix('/payment')->group(function () {
-        Route::get('/upload-bukti/{pesanan_id}', [PesananController::class, 'my_upload_payment_proof'])->name('pesanan.upload-bukti');
-        Route::post('/upload-bukti/{pesanan_id}', [InvoiceController::class, 'uploadPaymentProof'])->name('pesanan.store-bukti');
-    });
-
-    Route::prefix('/invoice')->group(function () {
-        Route::get('/pembayaran-saya', [InvoiceController::class, 'index'])->name('invoice.list');
-        Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('invoice.detail');
+        Route::get('/pembayaran-saya', [InvoiceController::class, 'index'])->name('reseller.payment.list');
+        Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('reseller.payment.detail'); //lihat invoice pembayaran
     });
 });

@@ -165,7 +165,7 @@ class PesananController extends Controller
         $pesanan->total_harga = $total_harga;
         $pesanan->save();
 
-        return redirect()->route('pesanan.detail', $pesanan->id)
+        return redirect()->route('reseller.pesanan.detail', $pesanan->id)
             ->with('success', 'Pesanan berhasil dibuat. Silakan tunggu persetujuan admin.');
     }
 

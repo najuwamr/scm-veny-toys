@@ -60,7 +60,7 @@
                             {{ $invoice->tgl_bayar?->translatedFormat('d M Y') ?? '-' }}
                         </td>
                         <td class="px-6 py-4">
-                            <a href="{{ route('admin.invoice.detail', $invoice->id) }}" class="inline-flex items-center rounded-full bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800">
+                            <a href="{{ Auth::user()->role === 'reseller' ? route('reseller.payment.detail', $invoice->id) : route('admin.invoice.detail', $invoice->id) }}" class="inline-flex items-center rounded-full bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800">
                                 Detail
                             </a>
                         </td>

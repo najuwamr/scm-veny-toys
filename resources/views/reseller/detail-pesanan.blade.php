@@ -9,7 +9,7 @@
             <h1 class="text-2xl font-semibold text-slate-900">Detail Pesanan Saya</h1>
             <p class="text-sm text-slate-500">Periksa status pesanan dan lakukan pembayaran atau konfirmasi penerimaan.</p>
         </div>
-        <a href="{{ route('pesanan.list') }}" class="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+        <a href="{{ route('reseller.pesanan.list') }}" class="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
             Kembali ke Pesanan Saya
         </a>
     </div>
@@ -145,7 +145,7 @@
                     <h3 class="mb-3 text-sm font-semibold text-blue-900">Upload Bukti Pembayaran Transfer</h3>
                     @if(!$pesanan->invoice->bukti_pembayaran)
                         <p class="mb-4 text-sm text-blue-700">Silakan upload bukti pembayaran Anda di bawah ini. Pastikan nominal pembayaran sesuai.</p>
-                        <a href="{{ route('pesanan.upload-bukti', $pesanan->id) }}" class="inline-flex items-center rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+                        <a href="{{ route('reseller.pesanan.upload-bukti', $pesanan->id) }}" class="inline-flex items-center rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
                             Upload Bukti Pembayaran
                         </a>
                     @else
@@ -160,7 +160,7 @@
                 <div class="mt-6 rounded-lg border border-purple-200 bg-purple-50 p-4">
                     <h3 class="mb-3 text-sm font-semibold text-purple-900">Konfirmasi Penerimaan Barang (COD)</h3>
                     <p class="mb-4 text-sm text-purple-700">Barang sudah dikirim. Setelah Anda konfirmasi penerimaan, pembayaran akan otomatis dianggap lunas.</p>
-                    <form action="{{ route('pesanan.confirm-received', $pesanan->id) }}" method="POST">
+                    <form action="{{ route('reseller.pesanan.confirm-received', $pesanan->id) }}" method="POST">
                         @csrf
                         <button type="submit" class="inline-flex items-center rounded-full bg-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-700">
                             ✓ Konfirmasi Barang Diterima

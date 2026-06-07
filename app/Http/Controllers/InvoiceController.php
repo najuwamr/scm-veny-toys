@@ -18,6 +18,12 @@ class InvoiceController extends Controller
     {
         $query = Invoice::with(['pesanan.reseller', 'verifiedBy']);
 
+        if (Auth::user()->role === 'reseller') {
+            $query->whereHas('pesanan', function ($q) {
+                $q->where('reseller_id', Auth::user()->reseller->id);
+            });
+        }
+
         // Filter metode pembayaran
         if ($request->filled('metode_bayar')) {
             $query->where('metode_bayar', $request->metode_bayar);
@@ -33,11 +39,11 @@ class InvoiceController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
-        return view('admin.list-invoice', compact('invoices'));
+        return view(Auth::user()->role === 'reseller' ? 'admin.list-invoice' : 'admin.list-invoice', compact('invoices'));
     }
 
     /**
-     * Admin: Detail invoice lengkap dengan opsi verifikasi/pembayaran
+     * Detail invoice lengkap dengan opsi verifikasi/pembayaran
      */
     public function detail($id)
     {
@@ -46,6 +52,10 @@ class InvoiceController extends Controller
             'pesanan.items.produk',
             'verifiedBy'
         ])->findOrFail($id);
+
+        if (Auth::user()->role === 'reseller' && $invoice->pesanan->reseller_id !== Auth::user()->reseller->id) {
+            return back()->with('error', 'Anda tidak memiliki akses ke invoice ini.');
+        }
 
         return view('admin.detail-invoice', compact('invoice'));
     }

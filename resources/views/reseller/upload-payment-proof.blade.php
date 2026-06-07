@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <form action="{{ route('pesanan.store-bukti', $pesanan->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <form action="{{ route('reseller.pesanan.store-bukti', $pesanan->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             <div>
@@ -83,7 +83,7 @@
             </div>
 
             <div class="flex gap-3 pt-6">
-                <a href="{{ route('pesanan.detail', $pesanan->id) }}" class="inline-flex items-center rounded-full border border-slate-300 bg-white px-6 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
+                <a href="{{ route('reseller.pesanan.detail', $pesanan->id) }}" class="inline-flex items-center rounded-full border border-slate-300 bg-white px-6 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50">
                     Batal
                 </a>
                 <button 

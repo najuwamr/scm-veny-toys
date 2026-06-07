@@ -109,7 +109,7 @@
         </div>
     </div>
 
-    @if($invoice->metode_bayar === 'transfer' && !$invoice->verified_at)
+    @if(Auth::user()->role === 'admin' && $invoice->metode_bayar === 'transfer' && !$invoice->verified_at)
         <div class="mt-6 rounded-3xl bg-blue-50 p-6 shadow-sm border border-blue-200">
             <h2 class="mb-4 text-lg font-semibold text-blue-900">Bukti Pembayaran Transfer</h2>
             @if($invoice->bukti_pembayaran)
