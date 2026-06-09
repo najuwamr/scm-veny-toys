@@ -211,6 +211,12 @@
                 Pesanan saat ini berstatus <span class="font-semibold text-slate-900">{{ ucfirst($pesanan->status) }}</span>. Tidak ada aksi tambahan.
             </div>
         @endif
+    @if(!$pesanan->distribusi)
+        <div class="mt-6">
+            <a href="{{ route('admin.distribution.jadwal.create', $pesanan->id) }}" class="inline-flex items-center rounded-full bg-pink-700 px-5 py-3 text-sm font-semibold text-white hover:bg-pink-800">Jadwalkan Pengiriman</a>
+        </div>
+    @endif
+
     </div>
 </div>
 @endsection

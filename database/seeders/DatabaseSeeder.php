@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
             ResellerSeeder::class,
             ProdukSeeder::class,
             PesananSeeder::class,
+            MetodePengirimanSeeder::class,
+            DistribusiSeeder::class,
+            PrakiraanProduksiSeeder::class,
             InvoiceSeeder::class,
         ]);
     }

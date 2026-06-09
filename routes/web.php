@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PesananController;
+use App\Http\Controllers\DistributionController;
+use App\Http\Controllers\ReportingController;
 use App\Models\Pesanan;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +44,23 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->group(function () {
         Route::get('/{id}/create-invoice', [InvoiceController::class, 'create'])->name('admin.invoice.create');
         // Route::get('/verify/{id}', [PesananController::class, 'verify'])->name('pesanan.verify');
     });
+
+    Route::prefix('/distribution')->group(function () {
+        Route::get('/', [DistributionController::class, 'index'])->name('admin.distribution.index');
+        Route::get('/metode', [DistributionController::class, 'metodeIndex'])->name('admin.distribution.metode');
+        Route::post('/metode', [DistributionController::class, 'metodeStore'])->name('admin.distribution.metode.store');
+
+        Route::get('/jadwal/{pesananId}', [DistributionController::class, 'jadwalCreate'])->name('admin.distribution.jadwal.create');
+        Route::post('/jadwal/{pesananId}', [DistributionController::class, 'jadwalStore'])->name('admin.distribution.jadwal.store');
+
+        Route::get('/tracking/{id}', [DistributionController::class, 'tracking'])->name('admin.distribution.tracking');
+        Route::post('/tracking/{id}/update', [DistributionController::class, 'updateStatus'])->name('admin.distribution.update');
+    });
+
+    Route::prefix('/reporting')->group(function () {
+        Route::get('/', [ReportingController::class, 'dashboard'])->name('admin.reporting.dashboard');
+        Route::get('/analytics', [ReportingController::class, 'analytics'])->name('admin.reporting.analytics');
+    });
 });
 
 
@@ -65,6 +84,8 @@ Route::middleware(['auth','role:distributor'])->prefix('distributor')->group(fun
 // -------- RESELLER  ROUTES --------- //
 // ----------------------------------- //
 Route::middleware(['auth','role:reseller'])->prefix('reseller')->group(function () {
+    Route::get('/', [PesananController::class, 'my_index'])->name('reseller.dashboard');
+
     Route::prefix('/pesanan')->group(function () {
         Route::get('/pesanan-saya', [PesananController::class, 'my_index'])->name('reseller.pesanan.list');
         Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('reseller.pesanan.detail');

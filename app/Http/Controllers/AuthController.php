@@ -14,8 +14,18 @@ class AuthController extends Controller
     public function klik_login()
     {
         if (Auth::check()) {
-            return redirect('/admin');
+            $user = Auth::user();
+            $redirectPath = match ($user->role) {
+                'admin' => '/admin',
+                'supplier' => '/supplier',
+                'distributor' => '/distributor',
+                'reseller' => '/reseller',
+                default => '/',
+            };
+
+            return redirect($redirectPath);
         }
+
         return view('login');
     }
 
@@ -34,7 +44,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
-            
+
             // Redirect berdasarkan role user
             $user = Auth::user();
             $redirectPath = match($user->role) {
@@ -44,7 +54,7 @@ class AuthController extends Controller
                 'reseller' => '/reseller',
                 default => '/',
             };
-            
+
             return redirect()->intended($redirectPath);
         }
 

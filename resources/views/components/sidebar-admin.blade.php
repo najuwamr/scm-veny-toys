@@ -19,7 +19,33 @@
 
         <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Production</p>
 
-        <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Distribution</p>
+        <a href="{{ route('admin.distribution.index') }}" class="group relative flex items-center gap-2 px-4 py-2 transition-colors hover:bg-pink-50">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 12h18" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M6 18h3" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M15 18h3" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M7 18a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" fill="#000" />
+                <path d="M17 18a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" fill="#000" />
+                <path d="M3 6h10" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M13 6v6" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M3 12v-2a2 2 0 0 1 2-2h8" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M13 8h4l3 4v4" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="text-md font-semibold text-pink-700">Daftar Distribusi</span>
+        </a>
+
+        <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Reporting & Monitoring</p>
+        <a href="{{ route('admin.reporting.dashboard') }}" class="group relative flex items-center gap-2 px-4 py-2 transition-colors hover:bg-pink-50">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 17h16" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M6 13l4-4 3 5 4-7" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M6 13h0" stroke="#c6005c" stroke-width="3" stroke-linecap="round" />
+                <path d="M10 9h0" stroke="#c6005c" stroke-width="3" stroke-linecap="round" />
+                <path d="M13 14h0" stroke="#c6005c" stroke-width="3" stroke-linecap="round" />
+                <path d="M18 10h0" stroke="#c6005c" stroke-width="3" stroke-linecap="round" />
+            </svg>
+            <span class="text-md font-semibold text-pink-700">Dashboard Laporan</span>
+        </a>
 
         <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Order & Payment</p>
         <a href="{{ route('admin.pesanan.list') }}" class="group relative flex items-center gap-2 px-4 py-2 transition-colors hover:bg-pink-50">
@@ -37,8 +63,6 @@
             </svg>
             <span class="text-md font-semibold text-pink-700">Daftar Invoice</span>
         </a>
-
-        <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Analytic & Report</p>
     </nav>
 
     <div class="border-t border-pink-200 p-4">
