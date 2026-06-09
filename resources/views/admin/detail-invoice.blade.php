@@ -10,7 +10,7 @@
             <p class="text-sm text-slate-500">Lihat rincian invoice dan proses pembayaran sesuai metode.</p>
         </div>
         <a href="{{ route('admin.invoice.list') }}" class="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
-            Kembali ke List Invoice
+            Kembali ke Daftar Invoice
         </a>
     </div>
 
@@ -60,8 +60,8 @@
                         <dd class="text-lg font-bold text-emerald-600">Rp {{ number_format($invoice->nominal_terbayar, 0, ',', '.') }}</dd>
                     </div>
                     <div>
-                        <dt class="font-semibold text-slate-800">Sisa Tagihan</dt>
-                        <dd class="text-lg font-bold text-red-600">Rp {{ number_format($invoice->sisa_tagihan, 0, ',', '.') }}</dd>
+                        <dt class="font-semibold text-slate-800">Tanggal Bayar</dt>
+                        <dd>{{ $invoice->tgl_bayar ? \Carbon\Carbon::parse($invoice->tgl_bayar)->translatedFormat('d M Y') : '-' }}</dd>
                     </div>
                     <div>
                         <dt class="font-semibold text-slate-800">Status Pembayaran</dt>
@@ -190,24 +190,42 @@
         </div>
     </div>
 
-    @if($invoice->status_pembayaran === 'lunas' && optional($invoice->pesanan)->status === 'diproses')
-        <div class="mt-6 rounded-3xl bg-emerald-50 p-6 shadow-sm border border-emerald-200">
-            <h2 class="mb-4 text-lg font-semibold text-emerald-900">Lanjutkan Pengiriman</h2>
-            <p class="mb-4 text-sm text-emerald-700">Invoice sudah lunas. Admin dapat menyetujui pesanan untuk lanjut ke tahap pengiriman.</p>
-            <form action="{{ route('admin.pesanan.action', optional($invoice->pesanan)->id) }}" method="POST">
-                @csrf
-                <input type="hidden" name="action" value="approve">
-                <button type="submit" class="inline-flex items-center justify-center rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-700">
-                    Kirim Pesanan
-                </button>
-            </form>
-        </div>
-    @endif
-</div>
+    <div class="mt-6 rounded-3xl bg-white p-6 shadow-sm">
+        <h2 class="mb-4 text-lg font-semibold text-slate-900">Perbarui Status Pembayaran</h2>
+        <p class="mb-6 text-sm text-slate-500">Gunakan form berikut untuk mengubah status pembayaran menjadi sebagian atau lunas.</p>
 
-@push('scripts')
-<script>
-    // Pastikan Storage sudah tersedia di Laravel
-</script>
-@endpush
+        <form action="{{ route('admin.invoice.action', $invoice->id) }}" method="POST" class="space-y-4">
+            @csrf
+
+            <div>
+                <label class="mb-2 block text-sm font-semibold text-slate-700">Status Pembayaran</label>
+                <select name="status_pembayaran" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm focus:border-slate-400 focus:outline-none">
+                    <option value="belum_bayar" {{ $invoice->status_pembayaran === 'belum_bayar' ? 'selected' : '' }}>Belum Bayar</option>
+                    <option value="sebagian" {{ $invoice->status_pembayaran === 'sebagian' ? 'selected' : '' }}>Sebagian</option>
+                    <option value="lunas" {{ $invoice->status_pembayaran === 'lunas' ? 'selected' : '' }}>Lunas</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="mb-2 block text-sm font-semibold text-slate-700">Metode Bayar</label>
+                <select name="metode_bayar" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm focus:border-slate-400 focus:outline-none">
+                    <option value="" {{ old('metode_bayar', $invoice->metode_bayar) === null ? 'selected' : '' }}>Pilih metode pembayaran</option>
+                    <option value="transfer bank" {{ old('metode_bayar', $invoice->metode_bayar) === 'transfer bank' ? 'selected' : '' }}>Transfer Bank</option>
+                    <option value="e-wallet" {{ old('metode_bayar', $invoice->metode_bayar) === 'e-wallet' ? 'selected' : '' }}>E-Wallet</option>
+                    <option value="cod" {{ old('metode_bayar', $invoice->metode_bayar) === 'cod' ? 'selected' : '' }}>COD</option>
+                </select>
+            </div>
+
+            <button type="submit" class="inline-flex items-center justify-center rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700">
+                Simpan Status Pembayaran
+            </button>
+        </form>
+
+        @if($invoice->status_pembayaran === 'lunas' && optional($invoice->pesanan)->status === 'diproses')
+            <div class="mt-4 rounded-3xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                Invoice sudah lunas. Sekarang admin dapat menyetujui pembayaran di detail pesanan untuk melanjutkan ke pengiriman.
+            </div>
+        @endif
+    </div>
+</div>
 @endsection

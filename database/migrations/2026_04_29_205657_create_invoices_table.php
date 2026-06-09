@@ -20,10 +20,7 @@ return new class extends Migration
             $table->integer('sisa_tagihan');
             $table->enum('status_pembayaran', ['belum_bayar', 'sebagian', 'lunas'])->default('belum_bayar');
             $table->date('tgl_bayar')->nullable();
-            $table->string('metode_bayar', 50)->nullable();
-            $table->string('bukti_pembayaran')->nullable();
-            $table->timestamp('verified_at')->nullable();
-            $table->foreignUuid('verified_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->enum('metode_bayar', ['transfer bank', 'e-wallet', 'cod'])->nullable();
             $table->timestamps();
         });
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Invoice;
 use App\Models\Pesanan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -16,6 +17,21 @@ class InvoiceController extends Controller
      */
     public function index(Request $request)
     {
+        if (Auth::check() && Auth::user()->role === 'reseller') {
+            $resellerId = Auth::user()->reseller->id;
+
+            $invoices = Invoice::with(['pesanan.reseller'])
+                ->whereHas('pesanan', function ($query) use ($resellerId) {
+                    $query->where('reseller_id', $resellerId);
+                })
+                ->orderByRaw("CASE status_pembayaran WHEN 'belum_bayar' THEN 1 WHEN 'sebagian' THEN 2 WHEN 'lunas' THEN 3 ELSE 4 END")
+                ->orderByDesc('created_at')
+                ->get();
+
+            return view('reseller.list-payment', compact('invoices'));
+        }
+
+        $invoices = Invoice::with(['pesanan.reseller'])
         $query = Invoice::with(['pesanan.reseller', 'verifiedBy']);
 
         if (Auth::user()->role === 'reseller') {
@@ -47,6 +63,15 @@ class InvoiceController extends Controller
      */
     public function detail($id)
     {
+        $invoice = Invoice::with(['pesanan.reseller', 'pesanan.items.produk'])->findOrFail($id);
+
+        if (Auth::check() && Auth::user()->role === 'reseller') {
+            if ($invoice->pesanan->reseller_id !== Auth::user()->reseller->id) {
+                abort(403);
+            }
+
+            return view('reseller.detail-payment', compact('invoice'));
+        }
         $invoice = Invoice::with([
             'pesanan.reseller',
             'pesanan.items.produk',
@@ -58,6 +83,24 @@ class InvoiceController extends Controller
         }
 
         return view('admin.detail-invoice', compact('invoice'));
+    }
+
+    public function confirm(Request $request, $id)
+    {
+        $invoice = Invoice::with('pesanan')->findOrFail($id);
+
+        if (!Auth::check() || Auth::user()->role !== 'reseller' || $invoice->pesanan->reseller_id !== Auth::user()->reseller->id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'metode_bayar' => 'required|in:' . implode(',', Invoice::PAYMENT_METHODS),
+        ]);
+
+        $invoice->metode_bayar = $request->input('metode_bayar');
+        $invoice->save();
+
+        return back()->with('success', 'Metode pembayaran tersimpan. Silakan konfirmasi melalui WhatsApp ke admin.');
     }
 
     /**
@@ -160,6 +203,11 @@ class InvoiceController extends Controller
 
         if ($invoice->metode_bayar !== 'transfer') {
             return back()->with('error', 'Penolakan hanya untuk metode Transfer.');
+        }
+
+        $metodeBayar = $request->input('metode_bayar');
+        if ($metodeBayar && !in_array($metodeBayar, Invoice::PAYMENT_METHODS, true)) {
+            return back()->with('error', 'Metode pembayaran tidak valid.');
         }
 
         // Reset nominal dan bukti

@@ -10,7 +10,7 @@
             <p class="text-sm text-slate-500">Periksa detail pesanan dan lakukan validasi status barang.</p>
         </div>
         <a href="{{ route('admin.pesanan.list') }}" class="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
-            Kembali ke List Pesanan
+            Kembali ke Daftar Pesanan
         </a>
     </div>
 
@@ -117,7 +117,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-slate-500">Tanggal Bayar</p>
-                    <p class="text-base font-semibold text-slate-900">{{ optional($pesanan->invoice->tgl_bayar)->translatedFormat('d M Y') ?? 'Belum dibayar' }}</p>
+                    <p class="text-base font-semibold text-slate-900">{{ \Carbon\Carbon::parse($pesanan->invoice->tgl_bayar)->translatedFormat('d M Y') }}</p>
                 </div>
             </div>
             <div class="mt-4 flex flex-wrap gap-3">

@@ -27,7 +27,7 @@ Route::get('/', function () {
 // ----------------------------------- //
 // ----------- AUTH  ROUTES ---------- //
 // ----------------------------------- //
-Route::get('/login', [AuthController::class, 'klik_login'])->name('login');
+Route::get('/', [AuthController::class, 'klik_login'])->name('login');
 Route::post('/login', [AuthController::class, 'proses_login'])->name('proses_login');
 Route::get('/logout', [AuthController::class, 'proses_logout'])->name('proses_logout');
 
@@ -35,14 +35,14 @@ Route::get('/logout', [AuthController::class, 'proses_logout'])->name('proses_lo
 // ----------------------------------- //
 // ---------- ADMIN  ROUTES ---------- //
 // ----------------------------------- //
-Route::middleware(['role:admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth','role:admin'])->prefix('admin')->group(function () {
     Route::get('/', [DashboardController::class, 'dashboard_admin'])->name('admin.dashboard');
     Route::prefix('/pesanan')->group(function () {
         Route::get('/list', [PesananController::class, 'index'])->name('admin.pesanan.list');
         Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('admin.pesanan.detail');
         Route::post('/action/{id}', [PesananController::class, 'action'])->name('admin.pesanan.action');
     });
-    
+
     Route::prefix('/invoice')->group(function () {
         Route::get('/list', [InvoiceController::class, 'index'])->name('admin.invoice.list');
         Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('admin.invoice.detail');
@@ -78,7 +78,7 @@ Route::middleware(['role:supplier'])->prefix('supplier')->group(function () {
 // ----------------------------------- //
 // --------- PRODUSEN  ROUTES --------- //
 // ----------------------------------- //
-Route::middleware(['role:produsen'])->prefix('produsen')->group(function () {
+Route::middleware(['auth','role:produsen'])->prefix('produsen')->group(function () {
     Route::get('/', [ProdusenController::class, 'dashboard'])->name('produsen.dashboard');
 
     Route::prefix('inventory')->group(function () {
@@ -109,13 +109,10 @@ Route::middleware(['role:produsen'])->prefix('produsen')->group(function () {
 // ----------------------------------- //
 // -------- RESELLER  ROUTES --------- //
 // ----------------------------------- //
-Route::middleware(['role:reseller'])->prefix('reseller')->group(function () {
+Route::middleware(['auth','role:reseller'])->prefix('reseller')->group(function () {
     Route::prefix('/pesanan')->group(function () {
         Route::get('/pesanan-saya', [PesananController::class, 'my_index'])->name('reseller.pesanan.list');
-        Route::get('/detail/{id}', [PesananController::class, 'my_detail'])->name('reseller.pesanan.detail');
-        Route::get('/{id}/upload-bukti', [PesananController::class, 'my_upload_payment_proof'])->name('reseller.pesanan.upload-bukti');
-        Route::post('/{id}/store-bukti', [InvoiceController::class, 'uploadPaymentProof'])->name('reseller.pesanan.store-bukti');
-        Route::post('/{id}/confirm-received', [PesananController::class, 'confirmReceived'])->name('reseller.pesanan.confirm-received');
+        Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('reseller.pesanan.detail');
 
         Route::get('/create', [PesananController::class, 'create'])->name('reseller.pesanan.create');
         Route::post('/simpan', [PesananController::class, 'store'])->name('reseller.pesanan.store');
@@ -124,5 +121,6 @@ Route::middleware(['role:reseller'])->prefix('reseller')->group(function () {
     Route::prefix('/payment')->group(function () {
         Route::get('/pembayaran-saya', [InvoiceController::class, 'index'])->name('reseller.payment.list');
         Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('reseller.payment.detail'); //lihat invoice pembayaran
+        Route::post('/detail/{id}/konfirmasi', [InvoiceController::class, 'confirm'])->name('reseller.payment.confirm');
     });
 });

@@ -15,6 +15,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
+
+        // Replace built-in CSRF middleware dengan custom
+        $middleware->replace(
+            \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            \App\Http\Middleware\VerifyCsrfToken::class
+        );
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

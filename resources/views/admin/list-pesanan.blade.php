@@ -1,12 +1,12 @@
 @extends('layouts.admin')
 
-@section('title', 'List Pesanan')
+@section('title', 'Daftar Pesanan')
 
 @section('content')
 <div class="ml-60 flex-1 p-8">
     <div class="mb-6 flex items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-semibold text-slate-900">List Pesanan</h1>
+            <h1 class="text-2xl font-semibold text-slate-900">Daftar Pesanan</h1>
             <p class="text-sm text-slate-500">Lihat semua pesanan masuk dan kelola statusnya dari admin.</p>
         </div>
     </div>
