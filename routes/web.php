@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\ProdusenController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -57,9 +58,20 @@ Route::middleware(['role:admin'])->prefix('admin')->group(function () {
 // --------- SUPPLIER  ROUTES -------- //
 // ----------------------------------- //
 Route::middleware(['role:supplier'])->prefix('supplier')->group(function () {
-    Route::get('/', function () {
-        return response('Dashboard supplier belum tersedia. Silakan hubungi admin untuk membuka akses.', 200);
-    })->name('supplier.dashboard');
+    Route::get('/', [SupplierController::class, 'dashboard'])->name('supplier.dashboard');
+
+    Route::prefix('offers')->group(function () {
+        Route::get('/', [SupplierController::class, 'offersIndex'])->name('supplier.offers.index');
+        Route::get('/create', [SupplierController::class, 'createOffer'])->name('supplier.offers.create');
+        Route::post('/', [SupplierController::class, 'storeOffer'])->name('supplier.offers.store');
+    });
+
+    Route::prefix('requests')->group(function () {
+        Route::get('/', [SupplierController::class, 'requestsIndex'])->name('supplier.requests.index');
+        Route::post('/{id}/approve', [SupplierController::class, 'approveRequest'])->name('supplier.requests.approve');
+        Route::post('/{id}/reject', [SupplierController::class, 'rejectRequest'])->name('supplier.requests.reject');
+        Route::post('/{id}/complete', [SupplierController::class, 'completeRequest'])->name('supplier.requests.complete');
+    });
 });
 
 
