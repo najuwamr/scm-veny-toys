@@ -9,12 +9,22 @@ class BahanBaku extends Model
 {
     use HasUuids;
 
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
-        'nama',
+        'kode_bahan',
+        'nama_bahan',
         'kategori',
         'satuan',
         'stok_saat_ini',
         'stok_minimum',
+        'keterangan',
+    ];
+
+    protected $casts = [
+        'stok_saat_ini' => 'decimal:2',
+        'stok_minimum'  => 'decimal:2',
     ];
 
     public function suppliers()
@@ -28,5 +38,9 @@ class BahanBaku extends Model
     public function mutations()
     {
         return $this->morphMany(Mutation::class, 'mutatable');
+    }
+    public function isStokKritis(): bool
+    {
+        return $this->stok_saat_ini <= $this->stok_minimum;
     }
 }
