@@ -131,4 +131,4 @@ class SupplierController extends Controller
 
         return redirect()->route('supplier.index')->with('success', 'Data pengiriman berhasil disimpan.');
     }
-}}
+}
