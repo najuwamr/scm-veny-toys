@@ -18,18 +18,20 @@ class PengirimanPengadaan extends Model
         'status',
         'tgl_kirim',
         'tgl_terima',
+        'ekspedisi',
+        'no_resi',
+        'estimasi_tiba',
+        'catatan',
     ];
 
     /**
      * Casting tipe data untuk tanggal agar otomatis menjadi objek Carbon.
      */
-    protected function casts(): array
-    {
-        return [
-            'tgl_kirim' => 'datetime',
-            'tgl_terima' => 'datetime',
-        ];
-    }
+    protected $casts = [
+        'tgl_kirim' => 'datetime',
+        'tgl_terima' => 'datetime',
+        'estimasi_tiba' => 'datetime',
+    ];
 
     /**
      * Relasi ke Permintaan Pengadaan.
@@ -38,5 +40,25 @@ class PengirimanPengadaan extends Model
     public function permintaanPengadaan(): BelongsTo
     {
         return $this->belongsTo(PermintaanPengadaan::class, 'permintaan_pengadaan_id');
+    }
+
+    public function permintaan(): BelongsTo
+    {
+        return $this->belongsTo(PermintaanPengadaan::class, 'permintaan_pengadaan_id');
+    }
+
+    public function getStatusPengirimanAttribute(): string
+    {
+        return $this->status;
+    }
+
+    public function getTanggalKirimAttribute()
+    {
+        return $this->tgl_kirim;
+    }
+
+    public function getEstimasiTibaAttribute()
+    {
+        return $this->tgl_terima;
     }
 }

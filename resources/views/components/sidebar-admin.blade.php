@@ -1,11 +1,9 @@
 <aside class="fixed left-0 top-0 z-40 flex h-screen w-60 flex-col rounded-r-4xl border-r-4 border-pink-200 bg-white">
     {{-- Nama Sistem + Logo --}}
     <div class="flex items-center gap-3 border-b border-pink-200 px-5 py-4">
-        {{-- logo --}}
         <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-pink-700 p-1">
             <img src="{{ asset('images/logo.svg') }}" alt="Logo">
         </div>
-        {{-- nama sistem --}}
         <div>
             <p class="text-lg font-bold text-gray-800">Veny Toys</p>
             <p class="text-sm text-gray-400">Supply Chain</p>
@@ -13,10 +11,75 @@
     </div>
 
     <nav class="flex-1 overflow-y-auto py-3 [&::-webkit-scrollbar]:hidden">
+
+        {{-- INVENTORY --}}
         <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Inventory</p>
 
+        <a href="{{ route('inventory.dashboard') }}"
+            class="group flex items-center gap-2 px-4 py-2 transition-colors hover:bg-pink-50 {{ request()->routeIs('inventory.dashboard') ? 'bg-pink-50' : '' }}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="3" width="8" height="8" rx="1.5" fill="{{ request()->routeIs('inventory.dashboard') ? '#c6005c' : '#d1d5db' }}"/>
+                <rect x="13" y="3" width="8" height="8" rx="1.5" fill="{{ request()->routeIs('inventory.dashboard') ? '#c6005c' : '#d1d5db' }}"/>
+                <rect x="3" y="13" width="8" height="8" rx="1.5" fill="{{ request()->routeIs('inventory.dashboard') ? '#c6005c' : '#d1d5db' }}"/>
+                <rect x="13" y="13" width="8" height="8" rx="1.5" fill="{{ request()->routeIs('inventory.dashboard') ? '#c6005c' : '#d1d5db' }}"/>
+            </svg>
+            <span class="text-md font-semibold {{ request()->routeIs('inventory.dashboard') ? 'text-pink-700' : 'text-gray-400' }}">Dashboard Inventory</span>
+        </a>
+
+        <a href="{{ route('inventory.produk') }}"
+            class="group flex items-center gap-2 px-4 py-2 transition-colors hover:bg-pink-50 {{ request()->routeIs('inventory.produk*') ? 'bg-pink-50' : '' }}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6H20V18H4V6Z" fill="{{ request()->routeIs('inventory.produk*') ? '#c6005c' : '#d1d5db' }}"/>
+                <path d="M7 9H17V11H7V9Z" fill="{{ request()->routeIs('inventory.produk*') ? '#c6005c' : '#d1d5db' }}"/>
+                <path d="M7 13H13V15H7V13Z" fill="{{ request()->routeIs('inventory.produk*') ? '#c6005c' : '#d1d5db' }}"/>
+            </svg>
+            <span class="text-md font-semibold {{ request()->routeIs('inventory.produk*') ? 'text-pink-700' : 'text-gray-400' }}">Manajemen Produk</span>
+        </a>
+
+        <a href="{{ route('inventory.bahan') }}"
+            class="group flex items-center gap-2 px-4 py-2 transition-colors hover:bg-pink-50 {{ request()->routeIs('inventory.bahan*') ? 'bg-pink-50' : '' }}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 5H20V19H4V5ZM5 6V18H19V6H5Z" fill="{{ request()->routeIs('inventory.bahan*') ? '#c6005c' : '#d1d5db' }}"/>
+                <path d="M7 9H17V11H7V9Z" fill="{{ request()->routeIs('inventory.bahan*') ? '#c6005c' : '#d1d5db' }}"/>
+                <path d="M7 13H13V15H7V13Z" fill="{{ request()->routeIs('inventory.bahan*') ? '#c6005c' : '#d1d5db' }}"/>
+            </svg>
+            <span class="text-md font-semibold {{ request()->routeIs('inventory.bahan*') ? 'text-pink-700' : 'text-gray-400' }}">Manajemen Bahan</span>
+        </a>
+
+        <a href="{{ route('inventory.notifikasi') }}"
+            class="group flex items-center gap-2 px-4 py-2 transition-colors hover:bg-pink-50 {{ request()->routeIs('inventory.notifikasi') ? 'bg-pink-50' : '' }}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C12.5523 2 13 2.44772 13 3V4.06189C15.8377 4.55399 18 7.02699 18 10V15L20 17H4L6 15V10C6 7.02699 8.16229 4.55399 11 4.06189V3C11 2.44772 11.4477 2 12 2ZM10 19C10 20.1046 10.8954 21 12 21C13.1046 21 14 20.1046 14 19H10Z" fill="{{ request()->routeIs('inventory.notifikasi') ? '#c6005c' : '#d1d5db' }}"/>
+            </svg>
+            <span class="text-md font-semibold {{ request()->routeIs('inventory.notifikasi') ? 'text-pink-700' : 'text-gray-400' }}">Notifikasi Stok</span>
+            @php $kritis = \App\Models\BahanBaku::whereColumn('stok_saat_ini','<=','stok_minimum')->count(); @endphp
+            @if($kritis > 0)
+                <span class="ml-auto mr-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">{{ $kritis }}</span>
+            @endif
+        </a>
+
+        {{-- PROCUREMENT --}}
         <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Procurement</p>
 
+        <a href="{{ route('procurement.index') }}"
+            class="group flex items-center gap-2 px-4 py-2 transition-colors hover:bg-pink-50 {{ request()->routeIs('procurement.index') ? 'bg-pink-50' : '' }}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M4 4C4 2.89543 4.89543 2 6 2H14.5858C15.1162 2 15.6249 2.21071 16 2.58579L19.4142 6C19.7893 6.37507 20 6.88378 20 7.41421V20C20 21.1046 19.1046 22 18 22H6C4.89543 22 4 21.1046 4 20V4ZM8 11C8 10.4477 8.44772 10 9 10H15C15.5523 10 16 10.4477 16 11C16 11.5523 15.5523 12 15 12H9C8.44772 12 8 11.5523 8 11ZM9 14C8.44772 14 8 14.4477 8 15C8 15.5523 8.44772 16 9 16H15C15.5523 16 16 15.5523 16 15C16 14.4477 15.5523 14 15 14H9Z" fill="{{ request()->routeIs('procurement.index') ? '#c6005c' : '#d1d5db' }}"/>
+            </svg>
+            <span class="text-md font-semibold {{ request()->routeIs('procurement.index') ? 'text-pink-700' : 'text-gray-400' }}">Daftar Permintaan</span>
+        </a>
+
+        <a href="{{ route('procurement.tracking') }}"
+            class="group flex items-center gap-2 px-4 py-2 transition-colors hover:bg-pink-50 {{ request()->routeIs('procurement.tracking') ? 'bg-pink-50' : '' }}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 6H21V8H3V6Z" fill="{{ request()->routeIs('procurement.tracking') ? '#c6005c' : '#d1d5db' }}"/>
+                <path d="M3 11H21V13H3V11Z" fill="{{ request()->routeIs('procurement.tracking') ? '#c6005c' : '#d1d5db' }}"/>
+                <path d="M3 16H15V18H3V16Z" fill="{{ request()->routeIs('procurement.tracking') ? '#c6005c' : '#d1d5db' }}"/>
+            </svg>
+            <span class="text-md font-semibold {{ request()->routeIs('procurement.tracking') ? 'text-pink-700' : 'text-gray-400' }}">Tracking Pengiriman</span>
+        </a>
+
+        {{-- SECTION LAIN --}}
         <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Production</p>
 
         <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Distribution</p>
@@ -39,20 +102,17 @@
         </a>
 
         <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Analytic & Report</p>
+
     </nav>
 
     <div class="border-t border-pink-200 p-4">
         <a href="{{ route('proses_logout') }}"
             class="flex items-center justify-center gap-2 rounded-xl bg-pink-700 px-4 py-3 font-semibold text-white transition hover:bg-pink-800">
-
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
-                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                 <polyline points="16 17 21 12 16 7"/>
                 <line x1="21" y1="12" x2="9" y2="12"/>
             </svg>
-
             Logout
         </a>
     </div>
