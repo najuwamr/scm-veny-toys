@@ -13,11 +13,13 @@ return new class extends Migration
     {
        Schema::create('bahan_bakus', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nama', 150);
-            $table->enum('kategori', ['kain', 'isi boneka', 'aksesoris']);
+            $table->string('kode_bahan', 50)->unique();
+            $table->string('nama_bahan', 150);
+            $table->enum('kategori', ['kain', 'isi boneka', 'aksesoris'])->nullable();
             $table->enum('satuan', ['meter', 'kg', 'pcs']);
             $table->decimal('stok_saat_ini', 10, 2)->default(0);
             $table->decimal('stok_minimum', 10, 2)->default(0);
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }
