@@ -1,4 +1,4 @@
-@extends('layouts.produsen')
+@extends('layouts.admin')
 
 @section('title', 'Produksi')
 
@@ -9,10 +9,31 @@
             <h1 class="text-2xl font-semibold text-slate-900">Produksi</h1>
             <p class="text-sm text-slate-500">Kelola jadwal produksi, pantau proses, dan lihat hasil produksi.</p>
         </div>
-        <a href="{{ route('produsen.produksi.create') }}" class="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+        <a href="{{ route('admin.procurement.produksi.create') }}" class="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
             Tambah Produksi
         </a>
     </div>
+
+    @if(!empty($forecastSummary))
+        <div class="mb-6 rounded-3xl bg-white p-6 shadow-sm border border-pink-100">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                    <p class="text-sm text-slate-500">Rekomendasi produksi terbaru dari forecast</p>
+                    <p class="mt-2 text-lg font-semibold text-slate-900">{{ $forecastSummary }}</p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <a href="{{ route('admin.procurement.forecast.index') }}" class="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+                        Lihat Detail Forecast
+                    </a>
+                    @if($latestForecastResult)
+                        <a href="{{ route('admin.procurement.forecast.exportPdf', ['result_id' => $latestForecastResult->id]) }}" class="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+                            Download Laporan
+                        </a>
+                    @endif
+                </div>
+            </div>
+        </div>
+    @endif
 
     <div class="overflow-hidden rounded-3xl bg-white shadow-sm">
         <table class="min-w-full border-separate border-spacing-0 text-sm">

@@ -2,9 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ForecastController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PesananController;
-use App\Http\Controllers\ProdusenController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,7 +16,6 @@ Route::get('/', function () {
     $redirectPath = match(\Illuminate\Support\Facades\Auth::user()->role) {
         'admin' => '/admin',
         'supplier' => '/supplier',
-        'produsen' => '/produsen',
         'reseller' => '/reseller/pesanan/pesanan-saya',
         default => '/login',
     };
@@ -48,8 +47,26 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->group(function () {
         Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('admin.invoice.detail');
         Route::post('/verify/{id}', [InvoiceController::class, 'verifyPayment'])->name('admin.invoice.verify');
         Route::post('/reject/{id}', [InvoiceController::class, 'rejectPayment'])->name('admin.invoice.reject');
+        Route::post('/action/{id}', [InvoiceController::class, 'updateStatus'])->name('admin.invoice.action');
 
         Route::get('/{id}/create-invoice', [InvoiceController::class, 'create'])->name('admin.invoice.create');
+    });
+
+    Route::prefix('/procurement')->group(function () {
+        Route::prefix('/produksi')->group(function () {
+            Route::get('/', [DashboardController::class, 'produksiIndex'])->name('admin.procurement.produksi.index');
+            Route::get('/create', [DashboardController::class, 'createProduksi'])->name('admin.procurement.produksi.create');
+            Route::post('/store-rencana', [DashboardController::class, 'storeRencanaProduksi'])->name('admin.procurement.produksi.store-rencana');
+            Route::post('/store-realisasi', [DashboardController::class, 'storeRealisasiProduksi'])->name('admin.procurement.produksi.store-realisasi');
+        });
+
+        Route::prefix('/forecast')->group(function () {
+            Route::get('/', [ForecastController::class, 'index'])->name('admin.procurement.forecast.index');
+            Route::post('/store', [ForecastController::class, 'store'])->name('admin.procurement.forecast.store');
+            Route::post('/calculate', [ForecastController::class, 'calculate'])->name('admin.procurement.forecast.calculate');
+            Route::get('/export-pdf', [ForecastController::class, 'exportPdf'])->name('admin.procurement.forecast.exportPdf');
+            Route::get('/export-excel', [ForecastController::class, 'exportExcel'])->name('admin.procurement.forecast.exportExcel');
+        });
     });
 });
 
@@ -75,38 +92,6 @@ Route::middleware(['role:supplier'])->prefix('supplier')->group(function () {
 });
 
 
-// ----------------------------------- //
-// --------- PRODUSEN  ROUTES --------- //
-// ----------------------------------- //
-Route::middleware(['auth','role:produsen'])->prefix('produsen')->group(function () {
-    Route::get('/', [ProdusenController::class, 'dashboard'])->name('produsen.dashboard');
-
-    Route::prefix('inventory')->group(function () {
-        Route::get('/bahan-baku', [ProdusenController::class, 'bahanBakuIndex'])->name('produsen.inventory.bahan-baku.index');
-        Route::get('/produk', [ProdusenController::class, 'produkIndex'])->name('produsen.inventory.produk.index');
-        Route::get('/mutasi', [ProdusenController::class, 'mutasiForm'])->name('produsen.inventory.mutasi.create');
-        Route::post('/mutasi', [ProdusenController::class, 'storeMutasi'])->name('produsen.inventory.mutasi.store');
-    });
-
-    Route::prefix('procurement')->group(function () {
-        Route::get('/', [ProdusenController::class, 'permintaanIndex'])->name('produsen.procurement.index');
-        Route::get('/create', [ProdusenController::class, 'createPermintaan'])->name('produsen.procurement.create');
-        Route::post('/store', [ProdusenController::class, 'storePermintaan'])->name('produsen.procurement.store');
-    });
-
-    Route::prefix('produksi')->group(function () {
-        Route::get('/', [ProdusenController::class, 'produksiIndex'])->name('produsen.produksi.index');
-        Route::get('/create', [ProdusenController::class, 'createProduksi'])->name('produsen.produksi.create');
-        Route::post('/store-rencana', [ProdusenController::class, 'storeRencanaProduksi'])->name('produsen.produksi.store-rencana');
-        Route::post('/store-realisasi', [ProdusenController::class, 'storeRealisasiProduksi'])->name('produsen.produksi.store-realisasi');
-    });
-
-    Route::get('/forecast', [ProdusenController::class, 'forecastIndex'])->name('produsen.forecast.index');
-    Route::post('/forecast/use/{id}', [ProdusenController::class, 'useForecast'])->name('produsen.forecast.use');
-});
-
-
-// ----------------------------------- //
 // -------- RESELLER  ROUTES --------- //
 // ----------------------------------- //
 Route::middleware(['auth','role:reseller'])->prefix('reseller')->group(function () {

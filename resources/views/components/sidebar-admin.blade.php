@@ -14,10 +14,15 @@
 
     <nav class="flex-1 overflow-y-auto py-3 [&::-webkit-scrollbar]:hidden">
         <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Inventory</p>
->
-        <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Procurement</p>
 
-        <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Production</p>
+
+        <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Procurement</p>
+        <a href="{{ route('admin.procurement.produksi.index') }}" class="group relative flex items-center gap-2 px-4 py-2 transition-colors hover:bg-pink-50">
+            <span class="text-md font-semibold text-pink-700">Produksi</span>
+        </a>
+        <a href="{{ route('admin.procurement.forecast.index') }}" class="group relative flex items-center gap-2 px-4 py-2 transition-colors hover:bg-pink-50">
+            <span class="text-md font-semibold text-pink-700">Forecast</span>
+        </a>
 
         <p class="px-5 py-2 text-sm font-semibold uppercase tracking-widest text-pink-200">Distribution</p>
 

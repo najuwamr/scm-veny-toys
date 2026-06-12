@@ -10,7 +10,7 @@ class Invoice extends Model
     use HasUuids;
 
     public const PAYMENT_METHODS = [
-        'transfer bank',
+        'transfer',
         'e-wallet',
         'cod',
     ];

@@ -1,4 +1,4 @@
-@extends('layouts.produsen')
+@extends('layouts.admin')
 
 @section('title', 'Buat Rencana Produksi')
 
@@ -9,7 +9,7 @@
             <h1 class="text-2xl font-semibold text-slate-900">Buat Rencana Produksi</h1>
             <p class="text-sm text-slate-500">Rencanakan produksi atau catat realisasi produksi baru.</p>
         </div>
-        <a href="{{ route('produsen.produksi.index') }}" class="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+        <a href="{{ route('admin.procurement.produksi.index') }}" class="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
             Kembali ke Produksi
         </a>
     </div>
@@ -17,7 +17,7 @@
     <div class="grid gap-6 xl:grid-cols-2">
         <div class="rounded-3xl bg-white p-6 shadow-sm">
             <h2 class="mb-4 text-lg font-semibold text-slate-900">Rencana Produksi</h2>
-            <form action="{{ route('produsen.produksi.store-rencana') }}" method="post" class="space-y-4">
+            <form action="{{ route('admin.procurement.produksi.store-rencana') }}" method="post" class="space-y-4">
                 @csrf
                 <div>
                     <label class="mb-2 block text-sm font-medium text-slate-700">Produk</label>
@@ -52,7 +52,7 @@
 
         <div class="rounded-3xl bg-white p-6 shadow-sm">
             <h2 class="mb-4 text-lg font-semibold text-slate-900">Realisasi Produksi</h2>
-            <form action="{{ route('produsen.produksi.store-realisasi') }}" method="post" class="space-y-4">
+            <form action="{{ route('admin.procurement.produksi.store-realisasi') }}" method="post" class="space-y-4">
                 @csrf
                 <div>
                     <label class="mb-2 block text-sm font-medium text-slate-700">Produk</label>

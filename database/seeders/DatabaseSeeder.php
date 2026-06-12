@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             ProdukSeeder::class,
             PesananSeeder::class,
             InvoiceSeeder::class,
+            ForecastSeeder::class,
         ]);
     }
 }

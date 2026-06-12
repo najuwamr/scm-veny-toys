@@ -9,8 +9,6 @@ use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
 
 class PesananController extends Controller
 {

@@ -36,7 +36,7 @@ class InvoiceSeeder extends Seeder
                     ->addDays(rand(1, 5));
 
                 $metodeBayar = collect([
-                    'transfer bank',
+                    'transfer',
                     'e-wallet',
                     'cod'
                 ])->random();

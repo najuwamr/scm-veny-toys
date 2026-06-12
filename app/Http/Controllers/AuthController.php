@@ -17,7 +17,6 @@ class AuthController extends Controller
             $redirectPath = match(Auth::user()->role) {
                 'admin' => '/admin',
                 'supplier' => '/supplier',
-                'produsen' => '/produsen',
                 'reseller' => '/reseller/pesanan/pesanan-saya',
                 default => '/login',
             };
@@ -47,7 +46,6 @@ class AuthController extends Controller
             $redirectPath = match($user->role) {
                 'admin' => '/admin',
                 'supplier' => '/supplier',
-                'produsen' => '/produsen',
                 'reseller' => '/reseller/pesanan/pesanan-saya',
                 default => '/login',
             };

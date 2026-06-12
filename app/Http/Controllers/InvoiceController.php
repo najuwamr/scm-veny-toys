@@ -7,7 +7,6 @@ use App\Models\Pesanan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class InvoiceController extends Controller
@@ -31,7 +30,6 @@ class InvoiceController extends Controller
             return view('reseller.list-payment', compact('invoices'));
         }
 
-        $invoices = Invoice::with(['pesanan.reseller'])
         $query = Invoice::with(['pesanan.reseller', 'verifiedBy']);
 
         if (Auth::user()->role === 'reseller') {
@@ -222,6 +220,45 @@ class InvoiceController extends Controller
         $invoice->save();
 
         return back()->with('success', 'Pembayaran ditolak. Nominal pembayaran direset. Alasan: ' . $validated['alasan']);
+    }
+
+    /**
+     * Admin: Perbarui status pembayaran secara manual
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $invoice = Invoice::findOrFail($id);
+
+        $request->validate([
+            'status_pembayaran' => 'required|in:belum_bayar,sebagian,lunas',
+            'metode_bayar' => 'nullable|in:transfer,e-wallet,cod',
+        ]);
+
+        $status = $request->input('status_pembayaran');
+        $metode = $request->input('metode_bayar');
+
+        $invoice->status_pembayaran = $status;
+        $invoice->metode_bayar = $metode;
+
+        if ($status === 'lunas') {
+            $invoice->nominal_terbayar = $invoice->jumlah_tagihan;
+            $invoice->sisa_tagihan = 0;
+            $invoice->tgl_bayar = now()->toDateString();
+        } elseif ($status === 'belum_bayar') {
+            $invoice->nominal_terbayar = 0;
+            $invoice->sisa_tagihan = $invoice->jumlah_tagihan;
+            $invoice->tgl_bayar = null;
+        } else { // sebagian
+            if ($invoice->nominal_terbayar <= 0) {
+                $invoice->nominal_terbayar = (int) ($invoice->jumlah_tagihan / 2);
+            }
+            $invoice->sisa_tagihan = $invoice->jumlah_tagihan - $invoice->nominal_terbayar;
+            $invoice->tgl_bayar = null;
+        }
+
+        $invoice->save();
+
+        return back()->with('success', 'Status pembayaran invoice berhasil diperbarui.');
     }
 
     /**
