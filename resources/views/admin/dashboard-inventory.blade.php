@@ -19,7 +19,7 @@
             <p class="font-semibold text-red-700">{{ $stokKritis->count() }} bahan baku stok kritis!</p>
             <p class="text-sm text-red-500">{{ $stokKritis->pluck('nama_bahan')->join(', ') }}</p>
         </div>
-        <a href="{{ route('inventory.notifikasi') }}" class="ml-auto shrink-0 rounded-lg bg-red-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-600">Lihat</a>
+        <a href="{{ route('admin.inventory.notifikasi') }}" class="ml-auto shrink-0 rounded-lg bg-red-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-600">Lihat</a>
     </div>
     @endif
 
@@ -52,7 +52,7 @@
         <div class="col-span-2 rounded-2xl bg-white p-6 shadow-sm border border-pink-100">
             <div class="mb-4 flex items-center justify-between">
                 <h2 class="font-bold text-gray-800">Stok Bahan Baku</h2>
-                <a href="{{ route('inventory.bahan') }}" class="text-sm font-semibold text-pink-600 hover:text-pink-800">Kelola →</a>
+                <a href="{{ route('admin.inventory.bahan') }}" class="text-sm font-semibold text-pink-600 hover:text-pink-800">Kelola →</a>
             </div>
             <div class="overflow-hidden rounded-xl border border-gray-100">
                 <table class="w-full text-sm">
@@ -94,7 +94,7 @@
         <div class="col-span-2 rounded-2xl bg-white p-6 shadow-sm border border-pink-100">
             <div class="mb-4 flex items-center justify-between">
                 <h2 class="font-bold text-gray-800">Stok Produk</h2>
-                <a href="{{ route('inventory.produk') }}" class="text-sm font-semibold text-pink-600 hover:text-pink-800">Kelola →</a>
+                <a href="{{ route('admin.inventory.produk') }}" class="text-sm font-semibold text-pink-600 hover:text-pink-800">Kelola →</a>
             </div>
             <div class="overflow-hidden rounded-xl border border-gray-100">
                 <table class="w-full text-sm">
@@ -133,19 +133,19 @@
             <div class="rounded-2xl bg-white p-6 shadow-sm border border-pink-100">
                 <h2 class="mb-4 font-bold text-gray-800">Aksi Cepat</h2>
                 <div class="flex flex-col gap-2">
-                    <a href="{{ route('inventory.produk') }}" class="flex items-center gap-3 rounded-xl bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-700 hover:bg-blue-100">
+                    <a href="{{ route('admin.inventory.produk') }}" class="flex items-center gap-3 rounded-xl bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-700 hover:bg-blue-100">
                         📦 Manajemen Produk
                     </a>
-                    <a href="{{ route('inventory.bahan') }}" class="flex items-center gap-3 rounded-xl bg-green-50 px-4 py-3 text-sm font-semibold text-green-700 hover:bg-green-100">
+                    <a href="{{ route('admin.inventory.bahan') }}" class="flex items-center gap-3 rounded-xl bg-green-50 px-4 py-3 text-sm font-semibold text-green-700 hover:bg-green-100">
                         🧱 Manajemen Bahan
                     </a>
-                    <a href="{{ route('inventory.masuk') }}" class="flex items-center gap-3 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700 hover:bg-emerald-100">
+                    <a href="{{ route('admin.inventory.masuk') }}" class="flex items-center gap-3 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700 hover:bg-emerald-100">
                         ↑ Catat Stok Masuk
                     </a>
-                    <a href="{{ route('inventory.keluar') }}" class="flex items-center gap-3 rounded-xl bg-orange-50 px-4 py-3 text-sm font-semibold text-orange-700 hover:bg-orange-100">
+                    <a href="{{ route('admin.inventory.keluar') }}" class="flex items-center gap-3 rounded-xl bg-orange-50 px-4 py-3 text-sm font-semibold text-orange-700 hover:bg-orange-100">
                         ↓ Catat Stok Keluar
                     </a>
-                    <a href="{{ route('procurement.create') }}" class="flex items-center gap-3 rounded-xl bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-700 hover:bg-pink-100">
+                    <a href="{{ route('admin.procurement.create') }}" class="flex items-center gap-3 rounded-xl bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-700 hover:bg-pink-100">
                         + Buat Permintaan
                     </a>
                 </div>

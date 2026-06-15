@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('kode_bahan', 50)->unique();
             $table->string('nama_bahan', 150);
             $table->enum('kategori', ['kain', 'isi boneka', 'aksesoris'])->nullable();
-            $table->enum('satuan', ['meter', 'kg', 'pcs']);
+            $table->enum('satuan', ['rol', 'kg', 'pcs']);
             $table->decimal('stok_saat_ini', 10, 2)->default(0);
             $table->decimal('stok_minimum', 10, 2)->default(0);
             $table->text('keterangan')->nullable();

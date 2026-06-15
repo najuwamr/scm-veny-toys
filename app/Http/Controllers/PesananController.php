@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\ItemPesanan;
 use App\Models\Pesanan;
 use App\Models\Produk;
+use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class PesananController extends Controller
 {
-    // Admin Methods
+    // ===== ADMIN METHODS =====
+
     public function index()
     {
         $pesanans = Pesanan::with(['reseller', 'invoice'])
@@ -37,6 +39,10 @@ class PesananController extends Controller
         return view('admin.detail-pesanan', compact('pesanan'));
     }
 
+    /**
+     * Admin: Ubah status pesanan sesuai flow
+     * Transisi: menunggu -> diproses -> dikirim -> selesai
+     */
     public function action(Request $request, $id)
     {
         $pesanan = Pesanan::with('items.produk')->findOrFail($id);
@@ -66,7 +72,9 @@ class PesananController extends Controller
             }
 
             $pesanan->status = 'diproses';
-        } elseif ($action === 'approve' && $pesanan->status === 'diproses') {
+        } 
+        elseif ($action === 'approve' && $pesanan->status === 'diproses') {
+            // Cek apakah invoice sudah dibuat dan pembayaran lunas
             if (!$pesanan->invoice) {
                 return back()->with('error', 'Invoice belum dibuat untuk pesanan ini.');
             }
@@ -75,7 +83,23 @@ class PesananController extends Controller
             }
 
             $pesanan->status = 'dikirim';
-        } else {
+            $pesanan->delivered_at = now();
+        } 
+        elseif ($action === 'complete' && $pesanan->status === 'dikirim') {
+            // Admin konfirmasi barang diterima reseller
+            $pesanan->status = 'selesai';
+            $pesanan->completed_at = now();
+
+            // Jika metode COD, set pembayaran otomatis lunas
+            if ($pesanan->invoice && $pesanan->invoice->metode_bayar === 'cod') {
+                $pesanan->invoice->nominal_terbayar = $pesanan->invoice->jumlah_tagihan;
+                $pesanan->invoice->sisa_tagihan = 0;
+                $pesanan->invoice->status_pembayaran = 'lunas';
+                $pesanan->invoice->tgl_bayar = now()->toDateString();
+                $pesanan->invoice->save();
+            }
+        }
+        else {
             return back()->with('error', 'Aksi tidak valid untuk status pesanan saat ini.');
         }
 
@@ -84,7 +108,41 @@ class PesananController extends Controller
         return back()->with('success', 'Status pesanan berhasil diperbarui.');
     }
 
-    // Reseller Methods
+    /**
+     * Admin: Buat invoice untuk pesanan yang diproses
+     * Digunakan sebelum pesanan dikirim
+     */
+    public function createInvoice($id)
+    {
+        $pesanan = Pesanan::with('invoice')->findOrFail($id);
+
+        if ($pesanan->status !== 'diproses') {
+            return back()->with('error', 'Invoice hanya dapat dibuat untuk pesanan yang sedang diproses.');
+        }
+
+        if ($pesanan->invoice) {
+            return back()->with('error', 'Invoice sudah dibuat untuk pesanan ini.');
+        }
+
+        // Tentukan metode bayar (default transfer, bisa diubah di form)
+        $metode_bayar = request()->input('metode_bayar', 'transfer');
+
+        $invoice = Invoice::create([
+            'pesanan_id' => $pesanan->id,
+            'no_invoice' => 'INV-' . strtoupper(Str::random(6)),
+            'jumlah_tagihan' => $pesanan->total_harga,
+            'nominal_terbayar' => 0,
+            'sisa_tagihan' => $pesanan->total_harga,
+            'status_pembayaran' => 'belum_bayar',
+            'metode_bayar' => $metode_bayar,
+        ]);
+
+        return redirect()->route('admin.invoice.detail', $invoice->id)
+            ->with('success', "Invoice berhasil dibuat dengan metode: " . ucfirst($metode_bayar));
+    }
+
+    // ===== RESELLER METHODS =====
+
     public function my_index()
     {
         $resellerId = Auth::user()->reseller->id;
@@ -95,7 +153,12 @@ class PesananController extends Controller
             ->orderByDesc('tgl_pesanan')
             ->get();
 
-        return view('reseller.list-pesanan', compact('pesanans'));
+        $pesanans = Pesanan::where('reseller_id', Auth::user()->reseller->id)
+            ->with(['items.produk', 'invoice'])
+            ->orderByDesc('tgl_pesanan')
+            ->get();
+
+        return view('reseller.list-pesanan', compact('pesanans'), compact('pesanans'));
     }
 
     public function create()

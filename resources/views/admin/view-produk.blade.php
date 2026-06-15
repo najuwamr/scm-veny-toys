@@ -9,7 +9,7 @@
             <h1 class="text-2xl font-bold text-gray-800">Manajemen Produk</h1>
             <p class="text-sm text-gray-400">Kelola produk jadi dan stok produk di sistem.</p>
         </div>
-        <a href="{{ route('inventory.produk.create') }}"
+        <a href="{{ route('admin.inventory.produk.create') }}"
             class="rounded-xl bg-pink-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-pink-800">
             + Tambah Produk
         </a>
@@ -41,7 +41,7 @@
                     <td class="px-5 py-4 text-right text-gray-600">{{ $produk->stok_minimum }}</td>
                     <td class="px-5 py-4 text-center">
                         <a
-                            href="{{ route('inventory.produk.edit', $produk) }}"
+                            href="{{ route('admin.inventory.produk.edit', $produk) }}"
                             class="inline-flex rounded-xl bg-pink-700 px-3 py-2 text-xs font-semibold text-white hover:bg-pink-800"
                         >Edit</a>
                     </td>

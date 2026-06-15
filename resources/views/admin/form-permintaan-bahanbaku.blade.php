@@ -5,39 +5,35 @@
 <main class="ml-60 flex-1 p-8">
 
     <div class="mb-8">
-        <a href="{{ route('procurement.index') }}" class="mb-2 inline-flex items-center gap-1 text-sm text-gray-400 hover:text-gray-600">← Kembali</a>
+        <a href="{{ route('admin.procurement.index') }}" class="mb-2 inline-flex items-center gap-1 text-sm text-gray-400 hover:text-gray-600">&larr; Kembali</a>
         <h1 class="text-2xl font-bold text-gray-800">Buat Permintaan Bahan</h1>
         <p class="text-sm text-gray-400">Buat permintaan pengadaan bahan baku ke supplier</p>
     </div>
 
     <div class="max-w-2xl">
         <div class="rounded-2xl bg-white p-6 shadow-sm border border-pink-100">
-            <form action="{{ route('procurement.store') }}" method="POST" class="flex flex-col gap-5">
+            <form action="{{ route('admin.procurement.store') }}" method="POST" class="flex flex-col gap-5">
                 @csrf
 
                 <div>
-                    <label class="mb-1.5 block text-sm font-semibold text-gray-700">Bahan Baku <span class="text-red-500">*</span></label>
-                    <select name="bahan_baku_id" required class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:border-pink-400 focus:outline-none">
-                        <option value="">-- Pilih Bahan Baku --</option>
-                        @foreach($bahanBaku as $bahan)
-                        <option value="{{ $bahan->id }}" {{ old('bahan_baku_id') == $bahan->id ? 'selected' : '' }}>
-                            {{ $bahan->nama_bahan }} — stok: {{ $bahan->stok_saat_ini }} {{ $bahan->satuan }}
-                            @if($bahan->isStokKritis()) ⚠ KRITIS @endif
+                    <label class="mb-1.5 block text-sm font-semibold text-gray-700">Bahan Baku & Supplier <span class="text-red-500">*</span></label>
+                    <select name="bahan_baku_supplier_id" required class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:border-pink-400 focus:outline-none">
+                        <option value="">-- Pilih Bahan Baku dari Supplier --</option>
+                        @foreach($bahanBakuSuppliers as $item)
+                        @php
+                            $bahan = $item->bahanBaku;
+                            $supplier = $item->supplier;
+                        @endphp
+                        <option value="{{ $item->id }}" {{ old('bahan_baku_supplier_id') == $item->id ? 'selected' : '' }}>
+                            {{ $bahan?->nama_bahan ?? 'Bahan tidak diketahui' }} - {{ $supplier?->name ?? 'Supplier tidak diketahui' }} - Rp {{ number_format($item->harga, 0, ',', '.') }}
+                            @if($bahan?->isStokKritis()) - KRITIS @endif
                         </option>
                         @endforeach
                     </select>
-                    @error('bahan_baku_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
-                </div>
-
-                <div>
-                    <label class="mb-1.5 block text-sm font-semibold text-gray-700">Supplier <span class="text-red-500">*</span></label>
-                    <select name="supplier_id" required class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:border-pink-400 focus:outline-none">
-                        <option value="">-- Pilih Supplier --</option>
-                        @foreach($suppliers as $supplier)
-                        <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>{{ $supplier->user?->name ?? $supplier->nama_perusahaan }}</option>
-                        @endforeach
-                    </select>
-                    @error('supplier_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                    @error('bahan_baku_supplier_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                    @if($bahanBakuSuppliers->isEmpty())
+                    <p class="mt-2 text-xs text-amber-600">Belum ada bahan baku dan harga dari supplier. Supplier perlu menambahkan data bahan terlebih dahulu.</p>
+                    @endif
                 </div>
 
                 <div>
@@ -55,7 +51,7 @@
                 </div>
 
                 <div class="flex gap-3 pt-2">
-                    <a href="{{ route('procurement.index') }}" class="flex-1 rounded-xl border border-gray-200 py-3 text-center text-sm font-semibold text-gray-600 hover:bg-gray-50">Batal</a>
+                    <a href="{{ route('admin.procurement.index') }}" class="flex-1 rounded-xl border border-gray-200 py-3 text-center text-sm font-semibold text-gray-600 hover:bg-gray-50">Batal</a>
                     <button type="submit" class="flex-1 rounded-xl bg-pink-700 py-3 text-sm font-semibold text-white hover:bg-pink-800">Kirim Permintaan</button>
                 </div>
             </form>

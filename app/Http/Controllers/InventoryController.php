@@ -63,7 +63,7 @@ class InventoryController extends Controller
             'keterangan',
         ]));
 
-        return redirect()->route('inventory.bahan')->with('success', 'Bahan baku berhasil ditambahkan.');
+        return redirect()->route('admin.inventory.bahan')->with('success', 'Bahan baku berhasil ditambahkan.');
     }
 
     public function updateBahan(Request $request, BahanBaku $bahan)
@@ -135,7 +135,7 @@ class InventoryController extends Controller
             'stok_minimum',
         ]));
 
-        return redirect()->route('inventory.produk')->with('success', 'Produk berhasil ditambahkan.');
+        return redirect()->route('admin.inventory.produk')->with('success', 'Produk berhasil ditambahkan.');
     }
 
     public function updateProduk(Request $request, Produk $produk)
@@ -197,7 +197,7 @@ class InventoryController extends Controller
             $bahan->increment('stok_saat_ini', $request->jumlah);
         });
 
-        return redirect()->route('inventory.masuk')->with('success', 'Stok masuk berhasil dicatat.');
+        return redirect()->route('admin.inventory.masuk')->with('success', 'Stok masuk berhasil dicatat.');
     }
 
     // ─── STOK KELUAR ─────────────────────────────────────────────────────────
@@ -244,7 +244,7 @@ class InventoryController extends Controller
             $bahan->decrement('stok_saat_ini', $request->jumlah);
         });
 
-        return redirect()->route('inventory.keluar')->with('success', 'Stok keluar berhasil dicatat.');
+        return redirect()->route('admin.inventory.keluar')->with('success', 'Stok keluar berhasil dicatat.');
     }
 
     // ─── NOTIFIKASI STOK KRITIS ───────────────────────────────────────────────

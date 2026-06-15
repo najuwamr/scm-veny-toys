@@ -5,7 +5,7 @@
 <main class="ml-60 flex-1 p-8">
 
     <div class="mb-8">
-        <a href="{{ route('procurement.index') }}" class="mb-2 inline-flex items-center gap-1 text-sm text-gray-400 hover:text-gray-600">← Kembali</a>
+        <a href="{{ route('admin.procurement.index') }}" class="mb-2 inline-flex items-center gap-1 text-sm text-gray-400 hover:text-gray-600">← Kembali</a>
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-2xl font-bold text-gray-800">Detail Permintaan</h1>
@@ -156,7 +156,7 @@
             <div class="rounded-2xl bg-green-50 p-6 border border-green-200">
                 <p class="mb-2 font-bold text-green-700">Barang Sudah Tiba?</p>
                 <p class="mb-4 text-sm text-green-600">Konfirmasi penerimaan akan otomatis menambah stok di inventory.</p>
-                <form action="{{ route('procurement.terima', $permintaan) }}" method="POST">
+                <form action="{{ route('admin.procurement.terima', $permintaan) }}" method="POST">
                     @csrf
                     <button type="submit" class="w-full rounded-xl bg-green-600 py-3 text-sm font-bold text-white hover:bg-green-700">
                         ✓ Konfirmasi Terima Barang

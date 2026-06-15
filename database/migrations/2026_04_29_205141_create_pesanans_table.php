@@ -18,6 +18,8 @@ return new class extends Migration
             $table->enum('status', ['menunggu', 'diproses', 'dikirim', 'selesai', 'dibatalkan'])->default('menunggu');
             $table->integer('total_harga');
             $table->date('tgl_pesanan');
+            $table->timestamp('delivered_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
             $table->text('catatan')->nullable();
             $table->timestamps();
         });

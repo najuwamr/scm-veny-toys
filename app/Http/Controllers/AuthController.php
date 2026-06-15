@@ -16,13 +16,11 @@ class AuthController extends Controller
         if (Auth::check()) {
             $user = Auth::user();
             $redirectPath = match ($user->role) {
-                'admin' => '/admin',
+                'admin' => '/admin/inventory/dashboard',
                 'supplier' => '/supplier',
-                'distributor' => '/distributor',
-                'reseller' => '/reseller',
-                default => '/',
+                'reseller' => '/reseller/pesanan/pesanan-saya',
+                default => '/login',
             };
-
             return redirect($redirectPath);
         }
 
@@ -48,11 +46,10 @@ class AuthController extends Controller
             // Redirect berdasarkan role user
             $user = Auth::user();
             $redirectPath = match($user->role) {
-                'admin' => '/admin',
+                'admin' => '/admin/inventory/dashboard',
                 'supplier' => '/supplier',
-                'distributor' => '/distributor',
-                'reseller' => '/reseller',
-                default => '/',
+                'reseller' => '/reseller/pesanan/pesanan-saya',
+                default => '/login',
             };
 
             return redirect()->intended($redirectPath);

@@ -126,7 +126,7 @@
                 <label class="mb-2 block text-sm font-semibold text-slate-700">Metode Pembayaran</label>
                 <select name="metode_bayar" class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm focus:border-slate-400 focus:outline-none">
                     <option value="" {{ old('metode_bayar', $invoice->metode_bayar) === null ? 'selected' : '' }}>Pilih metode pembayaran</option>
-                    <option value="transfer bank" {{ old('metode_bayar', $invoice->metode_bayar) === 'transfer bank' ? 'selected' : '' }}>Transfer Bank</option>
+                    <option value="transfer" {{ old('metode_bayar', $invoice->metode_bayar) === 'transfer' ? 'selected' : '' }}>Transfer Bank</option>
                     <option value="e-wallet" {{ old('metode_bayar', $invoice->metode_bayar) === 'e-wallet' ? 'selected' : '' }}>E-Wallet</option>
                     <option value="cod" {{ old('metode_bayar', $invoice->metode_bayar) === 'cod' ? 'selected' : '' }}>COD</option>
                 </select>

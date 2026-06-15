@@ -17,12 +17,14 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             SupplierSeeder::class,
             ResellerSeeder::class,
+            BahanBakuSeeder::class,
             ProdukSeeder::class,
             PesananSeeder::class,
             MetodePengirimanSeeder::class,
             DistribusiSeeder::class,
             PrakiraanProduksiSeeder::class,
             InvoiceSeeder::class,
+            ForecastSeeder::class,
         ]);
     }
 }

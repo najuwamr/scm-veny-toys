@@ -16,9 +16,11 @@ return new class extends Migration
             $table->foreignUuid('pesanan_id')->constrained()->onDelete('cascade');
             $table->string('no_invoice', 50)->unique();
             $table->integer('jumlah_tagihan');
+            $table->integer('nominal_terbayar')->default(0);
+            $table->integer('sisa_tagihan');
             $table->enum('status_pembayaran', ['belum_bayar', 'sebagian', 'lunas'])->default('belum_bayar');
             $table->date('tgl_bayar')->nullable();
-            $table->enum('metode_bayar', ['transfer bank', 'e-wallet', 'cod'])->nullable();
+            $table->enum('metode_bayar', ['transfer', 'e-wallet', 'cod'])->nullable();
             $table->timestamps();
         });
     }

@@ -62,7 +62,7 @@
             <h2 class="text-lg font-bold text-gray-800">Catat Stok Keluar</h2>
             <button type="button" onclick="const modal=document.getElementById('modal-keluar'); modal.classList.add('hidden'); modal.classList.remove('flex');" class="text-gray-400 hover:text-gray-600">✕</button>
         </div>
-        <form action="{{ route('inventory.keluar.store') }}" method="POST" class="flex flex-col gap-4">
+        <form action="{{ route('admin.inventory.keluar.store') }}" method="POST" class="flex flex-col gap-4">
             @csrf
             <div>
                 <label class="mb-1 block text-sm font-semibold text-gray-700">Bahan Baku</label>

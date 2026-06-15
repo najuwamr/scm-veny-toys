@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ForecastController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\InventoryController;
@@ -9,7 +10,6 @@ use App\Http\Controllers\ProcurementController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\DistributionController;
 use App\Http\Controllers\ReportingController;
-use App\Models\Pesanan;
 use Illuminate\Support\Facades\Route;
 
 // ----------------------------------- //
@@ -23,68 +23,93 @@ Route::get('/logout', [AuthController::class, 'proses_logout'])->name('proses_lo
 // ----------------------------------- //
 // ---------- ADMIN  ROUTES ---------- //
 // ----------------------------------- //
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-    Route::get('/', [DashboardController::class, 'dashboard_admin'])->name('admin.dashboard');
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
-    // Order & Payment
-    Route::prefix('/pesanan')->group(function () {
-        Route::get('/list', [PesananController::class, 'index'])->name('admin.pesanan.list');
-        Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('admin.pesanan.detail');
-        Route::post('/action/{id}', [PesananController::class, 'action'])->name('admin.pesanan.action');
+    Route::get('/', [DashboardController::class, 'dashboard_admin'])->name('dashboard');
+
+    // ---- Inventory ---- //
+    Route::prefix('inventory')->name('inventory.')->group(function () {
+        Route::get('/dashboard', [InventoryController::class, 'dashboard'])->name('dashboard');
+
+        Route::get('/produk', [InventoryController::class, 'indexProduk'])->name('produk');
+        Route::get('/produk/create', [InventoryController::class, 'createProduk'])->name('produk.create');
+        Route::get('/produk/{produk}/edit', [InventoryController::class, 'editProduk'])->name('produk.edit');
+        Route::post('/produk', [InventoryController::class, 'storeProduk'])->name('produk.store');
+        Route::put('/produk/{produk}', [InventoryController::class, 'updateProduk'])->name('produk.update');
+
+        Route::get('/bahan-baku', [InventoryController::class, 'indexBahan'])->name('bahan');
+        Route::get('/bahan-baku/create', [InventoryController::class, 'createBahan'])->name('bahan.create');
+        Route::get('/bahan-baku/{bahan}/edit', [InventoryController::class, 'editBahan'])->name('bahan.edit');
+        Route::post('/bahan-baku', [InventoryController::class, 'storeBahan'])->name('bahan.store');
+        Route::put('/bahan-baku/{bahan}', [InventoryController::class, 'updateBahan'])->name('bahan.update');
+
+        Route::get('/stok-masuk', [InventoryController::class, 'indexMasuk'])->name('masuk');
+        Route::post('/stok-masuk', [InventoryController::class, 'storeMasuk'])->name('masuk.store');
+        Route::get('/stok-keluar', [InventoryController::class, 'indexKeluar'])->name('keluar');
+        Route::post('/stok-keluar', [InventoryController::class, 'storeKeluar'])->name('keluar.store');
+
+        Route::get('/notifikasi', [InventoryController::class, 'notifikasi'])->name('notifikasi');
     });
 
-    Route::prefix('/invoice')->group(function () {
-        Route::get('/list', [InvoiceController::class, 'index'])->name('admin.invoice.list');
-        Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('admin.invoice.detail');
-        Route::post('/action/{id}', [InvoiceController::class, 'action'])->name('admin.invoice.action');
-        Route::get('/{id}/create-invoice', [InvoiceController::class, 'create'])->name('admin.invoice.create');
+    // ---- Procurement ---- //
+    Route::prefix('procurement')->name('procurement.')->group(function () {
+        Route::get('/', [ProcurementController::class, 'index'])->name('index');
+        Route::get('/buat', [ProcurementController::class, 'create'])->name('create');
+        Route::post('/', [ProcurementController::class, 'store'])->name('store');
+        Route::get('/tracking', [ProcurementController::class, 'tracking'])->name('tracking');
+
+        // ---- Production ---- //
+        Route::prefix('produksi')->name('produksi.')->group(function () {
+            Route::get('/', [DashboardController::class, 'produksiIndex'])->name('index');
+            Route::get('/create', [DashboardController::class, 'createProduksi'])->name('create');
+            Route::post('/store-rencana', [DashboardController::class, 'storeRencanaProduksi'])->name('store-rencana');
+            Route::post('/store-realisasi', [DashboardController::class, 'storeRealisasiProduksi'])->name('store-realisasi');
+        });
+
+        // ---- Forecast ---- //
+        Route::prefix('forecast')->name('forecast.')->group(function () {
+            Route::get('/', [ForecastController::class, 'index'])->name('index');
+            Route::post('/store', [ForecastController::class, 'store'])->name('store');
+            Route::post('/calculate', [ForecastController::class, 'calculate'])->name('calculate');
+            Route::get('/export-pdf', [ForecastController::class, 'exportPdf'])->name('exportPdf');
+            Route::get('/export-excel', [ForecastController::class, 'exportExcel'])->name('exportExcel');
+        });
+
+        Route::get('/{permintaan}', [ProcurementController::class, 'show'])->whereUuid('permintaan')->name('show');
+        Route::post('/{permintaan}/terima', [ProcurementController::class, 'konfirmasiTerima'])->whereUuid('permintaan')->name('terima');
     });
 
-    // Inventory
-    Route::prefix('/inventory')->group(function () {
-        Route::get('/dashboard', [InventoryController::class, 'dashboard'])->name('inventory.dashboard');
-        Route::get('/produk', [InventoryController::class, 'indexProduk'])->name('inventory.produk');
-        Route::get('/produk/create', [InventoryController::class, 'createProduk'])->name('inventory.produk.create');
-        Route::get('/produk/{produk}/edit', [InventoryController::class, 'editProduk'])->name('inventory.produk.edit');
-        Route::post('/produk', [InventoryController::class, 'storeProduk'])->name('inventory.produk.store');
-        Route::put('/produk/{produk}', [InventoryController::class, 'updateProduk'])->name('inventory.produk.update');
-        Route::get('/bahan-baku', [InventoryController::class, 'indexBahan'])->name('inventory.bahan');
-        Route::get('/bahan-baku/create', [InventoryController::class, 'createBahan'])->name('inventory.bahan.create');
-        Route::get('/bahan-baku/{bahan}/edit', [InventoryController::class, 'editBahan'])->name('inventory.bahan.edit');
-        Route::post('/bahan-baku', [InventoryController::class, 'storeBahan'])->name('inventory.bahan.store');
-        Route::put('/bahan-baku/{bahan}', [InventoryController::class, 'updateBahan'])->name('inventory.bahan.update');
-        Route::get('/stok-masuk', [InventoryController::class, 'indexMasuk'])->name('inventory.masuk');
-        Route::post('/stok-masuk', [InventoryController::class, 'storeMasuk'])->name('inventory.masuk.store');
-        Route::get('/stok-keluar', [InventoryController::class, 'indexKeluar'])->name('inventory.keluar');
-        Route::post('/stok-keluar', [InventoryController::class, 'storeKeluar'])->name('inventory.keluar.store');
-        Route::get('/notifikasi', [InventoryController::class, 'notifikasi'])->name('inventory.notifikasi');
+    // ---- Distribution ---- //
+    Route::prefix('distribution')->name('distribution.')->group(function () {
+        Route::get('/', [DistributionController::class, 'index'])->name('index');
+        Route::get('/metode', [DistributionController::class, 'metodeIndex'])->name('metode');
+        Route::post('/metode', [DistributionController::class, 'metodeStore'])->name('metode.store');
+        Route::get('/jadwal/{pesananId}', [DistributionController::class, 'jadwalCreate'])->name('jadwal.create');
+        Route::post('/jadwal/{pesananId}', [DistributionController::class, 'jadwalStore'])->name('jadwal.store');
+        Route::get('/tracking/{id}', [DistributionController::class, 'tracking'])->name('tracking');
+        Route::post('/tracking/{id}/update', [DistributionController::class, 'updateStatus'])->name('update');
     });
 
-    // Procurement
-    Route::prefix('/procurement')->group(function () {
-        Route::get('/', [ProcurementController::class, 'index'])->name('procurement.index');
-        Route::get('/buat', [ProcurementController::class, 'create'])->name('procurement.create');
-        Route::post('/', [ProcurementController::class, 'store'])->name('procurement.store');
-        Route::get('/tracking', [ProcurementController::class, 'tracking'])->name('procurement.tracking');
-        Route::get('/{permintaan}', [ProcurementController::class, 'show'])->name('procurement.show');
-        Route::post('/{permintaan}/terima', [ProcurementController::class, 'konfirmasiTerima'])->name('procurement.terima');
+    // ---- Order & Payment ---- //
+    Route::prefix('pesanan')->name('pesanan.')->group(function () {
+        Route::get('/list', [PesananController::class, 'index'])->name('list');
+        Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('detail');
+        Route::post('/action/{id}', [PesananController::class, 'action'])->name('action');
     });
 
-    Route::prefix('/distribution')->group(function () {
-        Route::get('/', [DistributionController::class, 'index'])->name('admin.distribution.index');
-        Route::get('/metode', [DistributionController::class, 'metodeIndex'])->name('admin.distribution.metode');
-        Route::post('/metode', [DistributionController::class, 'metodeStore'])->name('admin.distribution.metode.store');
-
-        Route::get('/jadwal/{pesananId}', [DistributionController::class, 'jadwalCreate'])->name('admin.distribution.jadwal.create');
-        Route::post('/jadwal/{pesananId}', [DistributionController::class, 'jadwalStore'])->name('admin.distribution.jadwal.store');
-
-        Route::get('/tracking/{id}', [DistributionController::class, 'tracking'])->name('admin.distribution.tracking');
-        Route::post('/tracking/{id}/update', [DistributionController::class, 'updateStatus'])->name('admin.distribution.update');
+    Route::prefix('invoice')->name('invoice.')->group(function () {
+        Route::get('/list', [InvoiceController::class, 'index'])->name('list');
+        Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('detail');
+        Route::post('/action/{id}', [InvoiceController::class, 'updateStatus'])->name('action');
+        Route::post('/{id}/verify', [InvoiceController::class, 'verifyPayment'])->name('verify');
+        Route::post('/{id}/reject', [InvoiceController::class, 'rejectPayment'])->name('reject');
+        Route::get('/{id}/create-invoice', [InvoiceController::class, 'create'])->name('create');
     });
 
-    Route::prefix('/reporting')->group(function () {
-        Route::get('/', [ReportingController::class, 'dashboard'])->name('admin.reporting.dashboard');
-        Route::get('/analytics', [ReportingController::class, 'analytics'])->name('admin.reporting.analytics');
+    // ---- Reporting ---- //
+    Route::prefix('reporting')->name('reporting.')->group(function () {
+        Route::get('/', [ReportingController::class, 'dashboard'])->name('dashboard');
+        Route::get('/analytics', [ReportingController::class, 'analytics'])->name('analytics');
     });
 });
 
@@ -92,37 +117,37 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 // ----------------------------------- //
 // --------- SUPPLIER  ROUTES -------- //
 // ----------------------------------- //
-Route::middleware(['auth', 'role:supplier'])->prefix('supplier')->group(function () {
-    Route::get('/', [SupplierController::class, 'index'])->name('supplier.index');
-    Route::post('/{permintaan}/approve', [SupplierController::class, 'approve'])->name('supplier.approve');
-    Route::post('/{permintaan}/reject', [SupplierController::class, 'reject'])->name('supplier.reject');
-    Route::post('/{permintaan}/kirim', [SupplierController::class, 'kirim'])->name('supplier.kirim');
-    Route::get('/tracking', [SupplierController::class, 'tracking'])->name('supplier.tracking');
+Route::middleware(['auth', 'role:supplier'])->prefix('supplier')->name('supplier.')->group(function () {
+    Route::get('/', [SupplierController::class, 'dashboard'])->name('dashboard');
+    Route::get('/permintaan', [SupplierController::class, 'index'])->name('index');
+    Route::get('/tracking', [SupplierController::class, 'tracking'])->name('tracking');
+    Route::post('/permintaan/{permintaan}/approve', [SupplierController::class, 'approve'])->whereUuid('permintaan')->name('approve');
+    Route::post('/permintaan/{permintaan}/reject', [SupplierController::class, 'reject'])->whereUuid('permintaan')->name('reject');
+    Route::post('/permintaan/{permintaan}/kirim', [SupplierController::class, 'kirim'])->whereUuid('permintaan')->name('kirim');
+
+    Route::prefix('bahan')->name('materials.')->group(function () {
+        Route::get('/', [SupplierController::class, 'materialsIndex'])->name('index');
+        Route::get('/create', [SupplierController::class, 'createMaterial'])->name('create');
+        Route::post('/', [SupplierController::class, 'storeMaterial'])->name('store');
+    });
 });
 
 
 // ----------------------------------- //
-// ------- DISTRIBUTOR  ROUTES ------- //
+// --------- RESELLER  ROUTES -------- //
 // ----------------------------------- //
-Route::middleware(['auth', 'role:distributor'])->prefix('distributor')->group(function () {
-    // Tambahkan routes untuk distributor di sini
-});
-
-
-// ----------------------------------- //
-// -------- RESELLER  ROUTES --------- //
-// ----------------------------------- //
-Route::middleware(['auth', 'role:reseller'])->prefix('reseller')->group(function () {
-    Route::prefix('/pesanan')->group(function () {
-        Route::get('/pesanan-saya', [PesananController::class, 'my_index'])->name('reseller.pesanan.list');
-        Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('reseller.pesanan.detail');
-        Route::get('/create', [PesananController::class, 'create'])->name('reseller.pesanan.create');
-        Route::post('/simpan', [PesananController::class, 'store'])->name('reseller.pesanan.store');
+Route::middleware(['auth', 'role:reseller'])->prefix('reseller')->name('reseller.')->group(function () {
+    Route::prefix('pesanan')->name('pesanan.')->group(function () {
+        Route::get('/pesanan-saya', [PesananController::class, 'my_index'])->name('list');
+        Route::get('/detail/{id}', [PesananController::class, 'detail'])->name('detail');
+        Route::get('/create', [PesananController::class, 'create'])->name('create');
+        Route::post('/simpan', [PesananController::class, 'store'])->name('store');
+        Route::post('/{id}/store-bukti', [InvoiceController::class, 'uploadPaymentProof'])->name('store-bukti');
     });
 
-    Route::prefix('/payment')->group(function () {
-        Route::get('/pembayaran-saya', [InvoiceController::class, 'index'])->name('reseller.payment.list');
-        Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('reseller.payment.detail');
-        Route::post('/detail/{id}/konfirmasi', [InvoiceController::class, 'confirm'])->name('reseller.payment.confirm');
+    Route::prefix('payment')->name('payment.')->group(function () {
+        Route::get('/pembayaran-saya', [InvoiceController::class, 'index'])->name('list');
+        Route::get('/detail/{id}', [InvoiceController::class, 'detail'])->name('detail');
+        Route::post('/detail/{id}/konfirmasi', [InvoiceController::class, 'confirm'])->name('confirm');
     });
 });

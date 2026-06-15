@@ -60,7 +60,7 @@
             <h2 class="text-lg font-bold text-gray-800">Catat Stok Masuk</h2>
             <button type="button" onclick="document.getElementById('modal-masuk').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">✕</button>
         </div>
-        <form action="{{ route('inventory.masuk.store') }}" method="POST" class="flex flex-col gap-4">
+        <form action="{{ route('admin.inventory.masuk.store') }}" method="POST" class="flex flex-col gap-4">
             @csrf
             <div>
                 <label class="mb-1 block text-sm font-semibold text-gray-700">Bahan Baku</label>

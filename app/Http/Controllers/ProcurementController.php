@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BahanBaku;
 use App\Models\BahanBakuSupplier;
 use App\Models\PermintaanPengadaan;
 use App\Models\PengirimanPengadaan;
-use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -29,30 +27,24 @@ class ProcurementController extends Controller
     // ─── FORM BUAT PERMINTAAN ─────────────────────────────────────────────────
     public function create()
     {
-        $bahanBaku = BahanBaku::orderBy('kode_bahan')->get();
-        $suppliers = Supplier::with('user')->get()->sortBy(function ($supplier) {
-            return $supplier->user?->name ?? $supplier->nama_perusahaan;
-        });
+        $bahanBakuSuppliers = BahanBakuSupplier::with(['bahanBaku', 'supplier.user'])
+            ->get()
+            ->sortBy(fn ($item) => ($item->bahanBaku?->nama_bahan ?? '') . '|' . ($item->supplier?->name ?? ''))
+            ->values();
 
-        return view('admin.form-permintaan-bahanbaku', compact('bahanBaku', 'suppliers'));
+        return view('admin.form-permintaan-bahanbaku', compact('bahanBakuSuppliers'));
     }
 
     // ─── SIMPAN PERMINTAAN BARU ───────────────────────────────────────────────
     public function store(Request $request)
     {
         $request->validate([
-            'bahan_baku_id' => 'required|exists:bahan_bakus,id',
-            'supplier_id'   => 'required|exists:suppliers,id',
+            'bahan_baku_supplier_id' => 'required|exists:bahan_baku_supplier,id',
             'jumlah_diminta' => 'required|numeric|min:0.01',
             'catatan_admin' => 'nullable|string',
         ]);
 
-        $bahanBakuSupplier = BahanBakuSupplier::firstOrCreate([
-            'bahan_baku_id' => $request->bahan_baku_id,
-            'supplier_id'   => $request->supplier_id,
-        ], [
-            'harga' => 0,
-        ]);
+        $bahanBakuSupplier = BahanBakuSupplier::findOrFail($request->bahan_baku_supplier_id);
 
         PermintaanPengadaan::create([
             'bahan_baku_supplier_id' => $bahanBakuSupplier->id,
@@ -61,7 +53,7 @@ class ProcurementController extends Controller
             'status'                 => 'menunggu',
         ]);
 
-        return redirect()->route('procurement.index')->with('success', 'Permintaan berhasil dibuat.');
+        return redirect()->route('admin.procurement.index')->with('success', 'Permintaan berhasil dibuat.');
     }
 
     // ─── DETAIL PERMINTAAN ────────────────────────────────────────────────────
@@ -124,7 +116,7 @@ class ProcurementController extends Controller
             $bahan->increment('stok_saat_ini', $permintaan->jumlah);
         });
 
-        return redirect()->route('procurement.show', $permintaan)
+        return redirect()->route('admin.procurement.show', $permintaan)
             ->with('success', 'Barang diterima! Stok telah diperbarui otomatis.');
     }
 }

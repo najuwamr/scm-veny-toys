@@ -9,7 +9,7 @@
             <h1 class="text-2xl font-bold text-gray-800">Manajemen Bahan</h1>
             <p class="text-sm text-gray-400">Kelola daftar bahan baku dan stok terkait produksi</p>
         </div>
-        <a href="{{ route('inventory.bahan.create') }}"
+        <a href="{{ route('admin.inventory.bahan.create') }}"
             class="rounded-xl bg-pink-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-pink-800">
             + Tambah Bahan Baku
         </a>
@@ -43,7 +43,7 @@
                     <td class="px-5 py-4 text-gray-600">{{ $bahan->keterangan ?? '-' }}</td>
                     <td class="px-5 py-4 text-center">
                         <a
-                            href="{{ route('inventory.bahan.edit', $bahan) }}"
+                            href="{{ route('admin.inventory.bahan.edit', $bahan) }}"
                             class="inline-flex rounded-xl bg-pink-700 px-3 py-2 text-xs font-semibold text-white hover:bg-pink-800"
                         >Edit</a>
                     </td>

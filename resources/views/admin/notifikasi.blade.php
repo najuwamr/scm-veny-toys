@@ -45,8 +45,8 @@
                 </div>
             </div>
             <div class="mt-4 flex gap-2">
-                <a href="{{ route('inventory.masuk') }}" class="rounded-lg bg-green-50 px-4 py-2 text-sm font-semibold text-green-700 hover:bg-green-100">+ Catat Masuk</a>
-                <a href="{{ route('procurement.create') }}" class="rounded-lg bg-pink-50 px-4 py-2 text-sm font-semibold text-pink-700 hover:bg-pink-100">Buat Permintaan</a>
+                <a href="{{ route('admin.inventory.masuk') }}" class="rounded-lg bg-green-50 px-4 py-2 text-sm font-semibold text-green-700 hover:bg-green-100">+ Catat Masuk</a>
+                <a href="{{ route('admin.procurement.create') }}" class="rounded-lg bg-pink-50 px-4 py-2 text-sm font-semibold text-pink-700 hover:bg-pink-100">Buat Permintaan</a>
             </div>
         </div>
         @endforeach

@@ -54,7 +54,7 @@
                         <p class="font-mono text-xs text-gray-400">{{ $item->pengiriman->no_resi ?? '-' }}</p>
                     </td>
                     <td class="px-5 py-3 text-center">
-                        <a href="{{ route('procurement.show', $item) }}" class="rounded-lg bg-pink-50 px-3 py-1.5 text-xs font-semibold text-pink-700 hover:bg-pink-100">Detail</a>
+                        <a href="{{ route('admin.procurement.show', $item) }}" class="rounded-lg bg-pink-50 px-3 py-1.5 text-xs font-semibold text-pink-700 hover:bg-pink-100">Detail</a>
                     </td>
                 </tr>
                 @empty

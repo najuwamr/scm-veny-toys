@@ -12,45 +12,41 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // ADMIN
-        User::create([
-            'id' => Str::uuid(),
-            'nama' => 'Admin Utama',
-            'username' => 'admin',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-            'telepon' => '081234567890',
-        ]);
+        User::firstOrCreate(
+            ['username' => 'admin'],
+            [
+                'id' => Str::uuid(),
+                'nama' => 'Admin Utama',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'telepon' => '081234567890',
+            ]
+        );
 
         // SUPPLIER
-        User::create([
-            'id' => Str::uuid(),
-            'nama' => 'Supplier A',
-            'username' => 'supplier',
-            'password' => Hash::make('password'),
-            'role' => 'supplier',
-            'telepon' => '081234567892',
-        ]);
-
-        // DISTRIBUTOR
-        User::create([
-            'id' => Str::uuid(),
-            'nama' => 'Distributor A',
-            'username' => 'distributor',
-            'password' => Hash::make('password'),
-            'role' => 'distributor',
-            'telepon' => '081234567893',
-        ]);
+        User::firstOrCreate(
+            ['username' => 'supplier'],
+            [
+                'id' => Str::uuid(),
+                'nama' => 'Supplier A',
+                'password' => Hash::make('password'),
+                'role' => 'supplier',
+                'telepon' => '081234567892',
+            ]
+        );
 
         // 5 RESELLER
         for ($i = 1; $i <= 5; $i++) {
-            User::create([
-                'id' => Str::uuid(),
-                'nama' => 'Reseller ' . $i,
-                'username' => 'reseller' . $i,
-                'password' => Hash::make('password'),
-                'role' => 'reseller',
-                'telepon' => '08123456789' . (4 + $i),
-            ]);
+            User::firstOrCreate(
+                ['username' => 'reseller' . $i],
+                [
+                    'id' => Str::uuid(),
+                    'nama' => 'Reseller ' . $i,
+                    'password' => Hash::make('password'),
+                    'role' => 'reseller',
+                    'telepon' => '08123456789' . (4 + $i),
+                ]
+            );
         }
     }
 }

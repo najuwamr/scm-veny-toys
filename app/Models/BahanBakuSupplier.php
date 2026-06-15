@@ -9,6 +9,11 @@ class BahanBakuSupplier extends Pivot
 {
     protected $table = 'bahan_baku_supplier';
     public $incrementing = true; // Karena kita punya kolom ID di tabel pivot
+    protected $fillable = [
+        'supplier_id',
+        'bahan_baku_id',
+        'harga',
+    ];
 
     public function bahanBaku()
     {

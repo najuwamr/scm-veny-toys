@@ -9,7 +9,7 @@
             <h1 class="text-2xl font-bold text-gray-800">Permintaan Bahan</h1>
             <p class="text-sm text-gray-400">Daftar semua permintaan bahan baku ke supplier</p>
         </div>
-        <a href="{{ route('procurement.create') }}" class="rounded-xl bg-pink-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-pink-800">
+        <a href="{{ route('admin.procurement.create') }}" class="rounded-xl bg-pink-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-pink-800">
             + Buat Permintaan
         </a>
     </div>
@@ -59,7 +59,7 @@
                     </td>
                     <td class="px-5 py-3 text-xs text-gray-400">{{ $item->created_at->format('d M Y') }}</td>
                     <td class="px-5 py-3 text-center">
-                        <a href="{{ route('procurement.show', $item) }}" class="rounded-lg bg-pink-50 px-3 py-1.5 text-xs font-semibold text-pink-700 hover:bg-pink-100">Detail</a>
+                        <a href="{{ route('admin.procurement.show', $item) }}" class="rounded-lg bg-pink-50 px-3 py-1.5 text-xs font-semibold text-pink-700 hover:bg-pink-100">Detail</a>
                     </td>
                 </tr>
                 @empty

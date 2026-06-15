@@ -11,7 +11,7 @@
     </div>
 
     <div class="rounded-2xl bg-white shadow-sm border border-pink-100 p-6">
-        <form action="{{ route('inventory.bahan.store') }}" method="POST" class="grid gap-4 md:grid-cols-2">
+        <form action="{{ route('admin.inventory.bahan.store') }}" method="POST" class="grid gap-4 md:grid-cols-2">
             @csrf
 
             <div>
@@ -67,7 +67,7 @@
             </div>
 
             <div class="md:col-span-2 flex justify-end gap-3 pt-2">
-                <a href="{{ route('inventory.bahan') }}" class="rounded-xl border border-gray-200 py-2.5 px-6 text-sm font-semibold text-gray-600 hover:bg-gray-50">Batal</a>
+                <a href="{{ route('admin.inventory.bahan') }}" class="rounded-xl border border-gray-200 py-2.5 px-6 text-sm font-semibold text-gray-600 hover:bg-gray-50">Batal</a>
                 <button type="submit" class="rounded-xl bg-pink-700 py-2.5 px-6 text-sm font-semibold text-white hover:bg-pink-800">Simpan</button>
             </div>
         </form>
